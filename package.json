@@ -5,14 +5,25 @@
   "main": "index.js",
   "dependencies": {
     "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
+    "knex": "^0.21.0",
+    "nodemon": "^2.0.3",
+    "pg": "^8.0.3",
     "ytdl-core": "^2.1.1"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "devDependencies": {
+    "jest": "^25.4.0"
   },
-  "author": "",
+  "scripts": {
+    "start": "node index.js",
+    "server": "nodemon index.js",
+    "test": "cross-env DB_ENV=testing jest --watch"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "author": "Matt Klein",
   "license": "ISC"
 }

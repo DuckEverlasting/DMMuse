@@ -1,9 +1,13 @@
+require('dotenv').config();
+
 const Discord = require('discord.js');
-const {	prefix,	token } = require('./config.json');
 const ytdl = require('ytdl-core');
-const parseCommand = require ('./parseCommand.js');
-const genRoom = require ('./generateRoom');
-const rollDice = require("./rollDice");
+const parseCommand = require ('./actions/parseCommand.js');
+const genRoom = require ('./actions/generateRoom.js');
+const rollDice = require("./actions/rollDice.js");
+
+const prefix = process.env.PREFIX;
+const token = process.env.TOKEN;
 
 const client = new Discord.Client();
 client.login(token);

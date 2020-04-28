@@ -1,29 +1,97 @@
 const db = require('../data/dbConfig.js');
 
-exports.get = function(params, user) {
+exports.getVar = async function({ params, author }) {
+  const user = author.id;
+  const key = params.join(" ");
 
-}
-
-exports.set = function(params, user) {
-  
-}
-
-function getGlobalVar(key) {
-  return db('globalVars')
+  let variable = await db('userVars')
+    .where("userid", user)
     .where("key", key)
     .first();
+  if (variable) {
+    return variable.value;
+  } else {
+    variable = await getGlobalVar(key);
+    if (variable) {
+      return variable.value;
+    } else {
+      return "Sorry, can't find that one."
+    }
+  }
 }
 
-function getUserVar(key, user) {
-  return db('userVars')
-    .where("username", user)
+exports.setUserVar = async function({ params, author }) {
+  console.log("params: ", params)
+  if (!params.includes("as") || params.length < 3) {
+    return 'Sorry, that\'s not the right syntax. To save value "a" under the name "b", the correct command is "save a as b".'
+  }
+
+  const value = params.slice(0, params.indexOf("as")).join(" ");
+  const key = params.slice(params.indexOf("as") + 1).join(" ");
+  const user = author.id;
+
+  let isGlobal = await getGlobalVar(key);
+  if (isGlobal) {
+    return "Sorry, that variable has been reserved by an admin."
+  }
+
+  let alreadyExists = await db('userVars')
+    .where("userid", user)
     .where("key", key)
     .first();
+  let updated;
+  if (alreadyExists) {
+    updated = await updateUserVar(key, value, user);
+  } else {
+    updated = await addUserVar(key, value, user);
+  }
+  if (updated) {
+    return `Got it, I've set "${key}" to equal "${value}" (for you only).`
+  } else {
+    return "Sorry, something's gone wrong."
+  }
+}
+
+exports.setGlobalVar = async function({ params, author }) {
+  if (!params.includes("as") || params.length < 3) {
+    return 'Sorry, that\'s not the right syntax. To save value "a" under the name "b", the correct command is "save a as b".'
+  }
+
+  const value = params.slice(0, params.indexOf("as")).join(" ");
+  const key = params.slice(params.indexOf("as") + 1).join(" ");
+  const user = author.id;
+
+  if (isAdmin(user)) {
+    let alreadyExists = await getUserVar(key, user);
+    let updated;
+    if (alreadyExists) {
+      updated = await updateGlobalVar(key, value);
+    } else {
+      updated = await addGlobalVar(key, value);
+    }
+    if (updated) {
+      return `Got it, I've set "${key}" to equal "${value}" globally.`
+    } else {
+      return "Sorry, something's gone wrong."
+    }
+  }
+}
+
+getGlobalVar = async function(key) {
+  let variable = await db('globalVars')
+    .where("key", key)
+    .first();
+
+  if (variable) {
+    return variable;
+  } else {
+    return null;
+  }
 }
 
 function addUserVar(key, value, user) {
   const variable = {
-    username: user,
+    userid: user,
     key,
     value
   }
@@ -40,12 +108,12 @@ function addUserVar(key, value, user) {
 
 function updateUserVar(key, value, user) {
   const variable = {
-    username: user,
+    userid: user,
     key,
     value
   }
   return db('userVars')
-    .where("username", user)
+    .where("userid", user)
     .where("key", key)
     .update(variable)
     .then(saved => {
@@ -55,24 +123,42 @@ function updateUserVar(key, value, user) {
         return null;
       }
     });
+}
 
-function addGlobalVar(key, value, user) {
+function addGlobalVar(key, value) {
   const variable = {
-    username: user,
     key,
     value
   }
-  return db('userVars')
+  return db('globalVars')
     .returning('id')
     .insert(variable)
     .then(ids => {
       [id] = ids;
-      return db('userVars')
+      return db('globalVars')
         .where("id", id)
         .first();
     });
 }
 
-function checkIfAdmin(user) {
-  const isAdmin = await db('admins')
+function updateGlobalVar(key, value) {
+  const variable = {
+    key,
+    value
+  }
+  return db('globalVars')
+    .where("key", key)
+    .update(variable)
+    .then(saved => {
+      if(saved > 0) {
+        return getGlobalVar(key);
+      } else {
+        return null;
+      }
+    });
+}
+
+async function isAdmin(user) {
+  const isAdmin = await db('admins').where("userid", user);
+  return !!isAdmin;
 }

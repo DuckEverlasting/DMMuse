@@ -3,22 +3,29 @@ const multi_word_replace = {
 };
 
 const single_word_replace = {
-  "r": "roll"
+  "r": "roll",
+  "p": "play",
+  "s": "save",
+  "l": "load"
 };
 
-const ignore_words = ["a", "an"];
+const ignore_words = [];
 
 const actions = [
-  "roll"
+  "roll",
+  "play",
+  "save",
+  "load"
 ];
 
 
 // Function to help interpret player commands
-module.exports = function parseCommand(command) {
+module.exports = function parseCommand(command, author) {
   console.log(command)
   const error = (text = "generic error") => ({
     action: "",
     params: "",
+    author: "",
     error: text
   });
 
@@ -52,6 +59,7 @@ module.exports = function parseCommand(command) {
   const result = {
     action: "",
     params: [],
+    author,
     error: ""
   };
 

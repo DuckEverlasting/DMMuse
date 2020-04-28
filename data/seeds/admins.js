@@ -5,7 +5,7 @@ exports.seed = function(knex) {
     .then(function () {
       // Inserts seed entries
       return knex('admins').insert([
-        {username: "DuckEverlasting#8679"},
+        {userid: '271003111236042753'},
       ]);
     });
 };

@@ -1,4 +1,4 @@
-module.exports = function(params) {
+module.exports = function({ params }) {
   if (!params.length) throw new Error("What would you like to roll?");
   const string = params.join("");
   const parsed = []

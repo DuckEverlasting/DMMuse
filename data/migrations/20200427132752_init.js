@@ -4,7 +4,7 @@ exports.up = function(knex, Promise) {
     .createTable('admins', tbl => {
       tbl.increments();
       tbl
-        .string('username', 128)
+        .string('userid', 32)
         .notNullable()
         .unique();
     })
@@ -21,7 +21,7 @@ exports.up = function(knex, Promise) {
     .createTable('userVars', tbl => {
       tbl.increments();
       tbl
-        .string('username', 128)
+        .string('userid', 32)
         .notNullable()
       tbl
         .string('key', 128)
@@ -33,7 +33,7 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-  return knex.schema.dropTableIfExists('admins')
-  return knex.schema.dropTableIfExists('globalVars')
+  knex.schema.dropTableIfExists('admins')
+  knex.schema.dropTableIfExists('globalVars')
   return knex.schema.dropTableIfExists('userVars')
 };

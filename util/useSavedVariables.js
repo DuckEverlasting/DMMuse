@@ -1,8 +1,7 @@
 const db = require('../data/dbConfig.js');
 
-exports.getVar = async function({ params, author }) {
-  const user = author.id;
-  const key = params.join(" ");
+exports.getVar = async function(key, message) {
+  const user = message.author.id;
 
   let variable = await db('userVars')
     .where("userid", user)
@@ -15,20 +14,19 @@ exports.getVar = async function({ params, author }) {
     if (variable) {
       return variable.value;
     } else {
-      return "Sorry, can't find that one."
+      return null
     }
   }
 }
 
-exports.setUserVar = async function({ params, author }) {
-  console.log("params: ", params)
+exports.setUserVar = async function({ params, message }) {
   if (!params.includes("as") || params.length < 3) {
     return 'Sorry, that\'s not the right syntax. To save value "a" under the name "b", the correct command is "save a as b".'
   }
 
   const value = params.slice(0, params.indexOf("as")).join(" ");
   const key = params.slice(params.indexOf("as") + 1).join(" ");
-  const user = author.id;
+  const user = message.author.id;
 
   let isGlobal = await getGlobalVar(key);
   if (isGlobal) {
@@ -52,14 +50,14 @@ exports.setUserVar = async function({ params, author }) {
   }
 }
 
-exports.setGlobalVar = async function({ params, author }) {
+exports.setGlobalVar = async function({ params, message }) {
   if (!params.includes("as") || params.length < 3) {
     return 'Sorry, that\'s not the right syntax. To save value "a" under the name "b", the correct command is "save a as b".'
   }
 
   const value = params.slice(0, params.indexOf("as")).join(" ");
   const key = params.slice(params.indexOf("as") + 1).join(" ");
-  const user = author.id;
+  const user = message.author.id;
 
   if (isAdmin(user)) {
     let alreadyExists = await getUserVar(key, user);

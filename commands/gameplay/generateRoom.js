@@ -1,3 +1,5 @@
+const { Command } = require('discord.js-commando');
+
 const attributesA = [
   {"name": "Ugly", "desc":"it looks absolutely hideous."},
   {"name": "Ornate", "desc":"it seems to be very intricately built."},
@@ -56,10 +58,23 @@ const attributesC = [
   {"name": "Foyer", "desc": "You stand in... you suppose it looks like a waiting room. Of sorts. "},
 ]
 
-module.exports = () => {
-  const roomNums = [Math.floor(Math.random() * attributesA.length), Math.floor(Math.random() * attributesB.length), Math.floor(Math.random() * attributesC.length)];
-  return {
-    name: attributesA[roomNums[0]].name + " " + attributesB[roomNums[1]].name + " " + attributesC[roomNums[2]].name,
-    desc: attributesC[roomNums[2]].desc + attributesB[roomNums[1]].desc + attributesA[roomNums[0]].desc
+module.exports = class GenerateRoomCommand extends Command {
+	constructor(client) {
+		super(client, {
+			name: 'generateroom',
+			group: 'gameplay',
+      memberName: 'generateroom',
+      aliases: ['get_a_room'],
+      description: 'Generates a room name and description. Mostly here as a test function.'
+		});
+	}
+
+	run() {
+    const roomNums = [Math.floor(Math.random() * attributesA.length), Math.floor(Math.random() * attributesB.length), Math.floor(Math.random() * attributesC.length)];
+    const room = {
+      name: attributesA[roomNums[0]].name + " " + attributesB[roomNums[1]].name + " " + attributesC[roomNums[2]].name,
+      desc: attributesC[roomNums[2]].desc + attributesB[roomNums[1]].desc + attributesA[roomNums[0]].desc
+    };
+    return `${room.name}: ${room.desc}`;
   }
-}
+};

@@ -20,12 +20,13 @@ const actions = [
 
 
 // Function to help interpret player commands
-module.exports = function parseCommand(command, author) {
-  console.log(command)
+module.exports = function parseCommand(command, author, type) {
+  console.log("Recieved: ", command);
   const error = (text = "generic error") => ({
     action: "",
     params: "",
     author: "",
+    type: "",
     error: text
   });
 
@@ -59,7 +60,7 @@ module.exports = function parseCommand(command, author) {
   const result = {
     action: "",
     params: [],
-    author,
+    message,
     error: ""
   };
 

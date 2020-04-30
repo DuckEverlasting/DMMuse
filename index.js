@@ -1,17 +1,45 @@
 require('dotenv').config();
 
-const Discord = require('discord.js');
-const ytdl = require('ytdl-core');
-const parseCommand = require ('./actions/parseCommand.js');
-const genRoom = require ('./actions/generateRoom.js');
-const rollDice = require("./actions/rollDice.js");
-const { setUserVar, setGlobalVar, getVar } = require("./actions/useSavedVariables.js");
+const { CommandoClient } = require('discord.js-commando');
+const { Structures } = require('discord.js');
+const path = require('path');
 
-const prefix = process.env.PREFIX;
-const token = process.env.TOKEN;
+const getDiceRequest = require('./argumentTypes/diceRequest');
+const getMusicRequest = require('./argumentTypes/musicRequest');
 
-const client = new Discord.Client();
-client.login(token);
+Structures.extend('Guild', Guild => {
+  class MusicGuild extends Guild {
+    constructor(client, data) {
+      super(client, data);
+      this.musicData = {
+        queue: [],
+        isPlaying: false,
+        volume: .25,
+        songDispatcher: null,
+        loop: "none"
+      };
+    }
+  }
+  return MusicGuild;
+});
+
+const client = new CommandoClient({
+	commandPrefix: process.env.PREFIX || '!dmm',
+	owner: '271003111236042753'
+});
+
+client.registry
+  .registerDefaultTypes()
+  .registerTypes([getDiceRequest(client), getMusicRequest(client)])
+	.registerGroups([
+		['gameplay', 'Gameplay'],
+		['music', 'Music'],
+	])
+	.registerDefaultGroups()
+	.registerDefaultCommands()
+	.registerCommandsIn(path.join(__dirname, 'commands'));
+
+client.login(process.env.TOKEN);
 
 client.once('ready', () => {
   console.log('Ready!');
@@ -23,38 +51,39 @@ client.once('disconnect', () => {
   console.log('Disconnect!');
 });
 
-const actions = {
-  "roll": rollDice,
-  "save": setUserVar,
-  "load": getVar
-}
+// const genRoom = require ('./commands/gameplay/generateRoom.js');
+// const rollDice = require("./commands/gameplay/rollDice.js");
+// const { setUserVar, setGlobalVar, getVar } = require("./actions/useSavedVariables.js");
 
-client.on('message', async message => {
-  if (message.author.bot) return;
+// const actions = {
+//   "roll": rollDice,
+//   "save": setUserVar,
+//   "load": getVar,
+//   "get_a_room": genRoom,
+//   "play": null,
+//   "pause": null,
+//   "stop": null,
+//   "skip": null,
+// }
 
-  let parsedCommand;
-  if (message.channel.type === "dm") {
-    parsedCommand = parseCommand(message.content, message.author);
-  } else if (message.content.startsWith(prefix)) {
-    parsedCommand = parseCommand(message.content.slice(prefix.length), message.author);
-  } else {
-    return;
-  }
+// client.on('message', async message => {
+//   if (message.author.bot) return;
 
-  if (!parsedCommand.error) {
-    try {
-      message.channel.send(await actions[parsedCommand.action](parsedCommand));
-    } catch(error) {
-      console.error(error);
-    }
-  } else {
-    console.log(parsedCommand.error);
-  }
+//   let parsedCommand;
+//   if (message.channel.type === "dm" || message.content.startsWith(prefix)) {
+//     parsedCommand = parseCommand(message);
+//   } else {
+//     return;
+//   }
 
-  if (message.content === `${prefix}get a room`) {
-    const room = genRoom();
-    message.channel.send(`${room.name}: ${room.desc}`)
-  }
-
-})
-
+//   if (!parsedCommand.error) {
+//     try {
+//       message.channel.send(await actions[parsedCommand.action](parsedCommand));
+//     } catch(error) {
+//       console.error(error);
+//     }
+//   } else {
+//     console.log(parsedCommand.error);
+//     message.channel.send("Were you talking to me? Sorry, I don't know that command.");
+//   }
+// });

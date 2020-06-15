@@ -14,7 +14,7 @@ module.exports = class PlayCommand extends Command {
       memberName: "play-music",
       group: "music",
       description:
-        'Play any song or playlist from Youtube. To use saved variables, surround them in greater/less than brackets like <this>. Flags are added at the end with the "#" symbol.',
+        'Play any song or playlist from Youtube. To use saved variables, surround them in greater/less than brackets like <this>. Flags are added at the end with the ">" symbol.',
       guildOnly: true,
       clientPermissions: ["SPEAK", "CONNECT"],
       args: [
@@ -42,7 +42,10 @@ module.exports = class PlayCommand extends Command {
     ) {
       try {
         const playlist = await youtube.getPlaylist(html);
-        const videos = await playlist.getVideos();
+        if (playlist.length > 20) {
+          message.say("That's a long playlist! I'm just going to take the first 20 of those, if you don't mind.");
+        }
+        const videos = await playlist.getVideos(20);
         videos.forEach(async (el) => {
           const video = await el.fetch();
           let duration = this.parseDuration(video.duration);
@@ -59,6 +62,7 @@ module.exports = class PlayCommand extends Command {
           };
           message.guild.musicData.queue.push(song);
         });
+        console.log(message.guild.musicData.queue)
 
         if (message.guild.musicData.isPlaying == false) {
           message.guild.musicData.isPlaying = true;
@@ -77,7 +81,7 @@ module.exports = class PlayCommand extends Command {
     if (html.match(/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.?be)\/.+$/)) {
       try {
         const video = await youtube.getVideo(html);
-        let duration = this.formatDuration(video.duration);
+        let duration = this.parseDuration(video.duration);
         if (duration == "00:00") {
           duration = "Live Stream";
         }
@@ -171,6 +175,7 @@ module.exports = class PlayCommand extends Command {
         voiceChannel,
         flags,
       };
+      console.log("URL: ", song.url)
 
       if (flags.has("now")) {
         message.guild.musicData.queue.unshift(song);
@@ -201,6 +206,8 @@ module.exports = class PlayCommand extends Command {
 
   playSong(queue, message) {
     let voiceChannel;
+    const currentSong = queue[0];
+    console.log("PLAYING: ", currentSong);
     queue[0].voiceChannel
       .join()
       .then((connection) => {
@@ -212,7 +219,6 @@ module.exports = class PlayCommand extends Command {
             })
           )
           .on("start", () => {
-            const currentSong = queue[0];
             message.guild.musicData.songDispatcher = dispatcher;
             dispatcher.setVolume(message.guild.musicData.volume);
             voiceChannel = currentSong.voiceChannel;
@@ -233,15 +239,19 @@ module.exports = class PlayCommand extends Command {
               message.say(videoEmbed);
             }
             currentSong.flags.add("played");
-            if (message.guild.musicData.loop !== "current") {
-              queue.shift();
-              if (message.guild.musicData.loop === "all") {
-                queue.push(currentSong);
-              }
-            }
+            queue.shift();
             return queue;
           })
           .on("finish", () => {
+            if (message.guild.musicData.shuffle) {
+              queue
+            }
+            if (message.guild.musicData.loop === "current") {
+              queue.unshift(currentSong);
+            } else if (message.guild.musicData.loop === "all") {
+              currentSong.flags.delete("played");
+              queue.push(currentSong);
+            }
             if (queue.length >= 1) {
               return this.playSong(queue, message);
             } else {

@@ -12,7 +12,7 @@ module.exports = async function fadeMusic(dispatcher, value, speed = 1) {
   }
 
   if (target !== null && target !== dispatcher.volume) {
-    const fadeInterval = (target - dispatcher.volume) / (10 * speed);
+    const fadeInterval = (target - dispatcher.volume) / (5 * speed);
 
     while(dispatcher.volume !== target) {
       await dispatcher.setVolume(dispatcher.volume + fadeInterval);
@@ -26,7 +26,7 @@ module.exports = async function fadeMusic(dispatcher, value, speed = 1) {
         }
       }
       console.log(dispatcher.volume)
-      await wait(200);
+      await wait(500);
     }
   }
 }

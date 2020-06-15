@@ -1,7 +1,7 @@
 module.exports = function getFlags(flagsString) {
   const flags = new Set();
   let nextFlag;
-  const parseExp = /\s*#\w+/gi;
+  const parseExp = /\s*>\w+/gi;
   do {
     nextFlag = parseExp.exec(flagsString);
     if (nextFlag) {

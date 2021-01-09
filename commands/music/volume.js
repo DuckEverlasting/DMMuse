@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { Command } = require('discord.js-commando');
 const parseFlags = require('../../util/parseFlags');
 const fade = require("../../util/fadeMusic");
@@ -6,7 +7,7 @@ module.exports = class PauseCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'change-music-volume',
-      aliases: ['volume', 'vol'],
+      aliases: ['volume', 'vol', 'fade'],
       memberName: 'change-music-volume',
       group: 'music',
       description: 'Change the volume of the current playing song.',
@@ -31,8 +32,10 @@ module.exports = class PauseCommand extends Command {
 
   async run(message, { target, flags }) {
     flags = parseFlags(flags);
+    if (message.content.startsWith(process.env.PREFIX + "fade")) {
+      flags.add("fade");
+    }
     target /= 50;
-    console.log(target);
     const dispatcher = message.guild.musicData.songDispatcher;
     if (dispatcher.busy) { return }
     const voiceChannel = message.member.voice.channel;

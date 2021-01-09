@@ -8,7 +8,7 @@ class MusicRequest extends ArgumentType {
   }
 
   parse(val, msg, arg) {
-    const initParse = (/^(?<html>[^>]*)(?<flagsString>(\s*>\w+)*)/i).exec(val);
+    const initParse = (/^(?<html>[^\$]*)(?<flagsString>(\s*\$\w+)*)/i).exec(val);
     let { html, flagsString } = initParse.groups;
     const flags = parseFlags(flagsString);
 

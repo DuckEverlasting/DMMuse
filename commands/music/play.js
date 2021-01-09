@@ -1,4 +1,6 @@
 require("dotenv").config();
+const path = require('path');
+const fs = require('fs');
 
 const { Command } = require("discord.js-commando");
 const { MessageEmbed } = require("discord.js");
@@ -14,7 +16,7 @@ module.exports = class PlayCommand extends Command {
       memberName: "play-music",
       group: "music",
       description:
-        'Play any song or playlist from Youtube. To use saved variables, surround them in greater/less than brackets like <this>. Flags are added at the end with the ">" symbol.',
+        'Play any song or playlist from Youtube. To use saved variables, surround them in greater/less than brackets like <this>. Flags are added at the end with the "$" symbol.',
       guildOnly: true,
       clientPermissions: ["SPEAK", "CONNECT"],
       args: [
@@ -29,12 +31,47 @@ module.exports = class PlayCommand extends Command {
 
   async run(message, { query }) {
     const voiceChannel = message.member.voice.channel;
-    const { html, flags } = query;
+    let { html, flags } = query;
+    html = html.trim();
 
     if (!voiceChannel) {
       return message.say(
         "I can only play music in voice channels. Join a voice channel and try again."
       );
+    }
+
+    if (["intro", "outro"].includes(html)) {
+      const path = process.env.MEDIA_PATH + html + ".wav";
+      try {
+        if (!fs.existsSync(path)){
+          throw new Error("NO FILE AT " + path);
+        };
+        flags.add("file");
+        const song = {
+          url: path,
+          title: "Eberron Awaits " + html,
+          thumbnail: null,
+          duration: "00:38",
+          voiceChannel,
+          flags
+        };
+        console.log(song);
+        message.guild.musicData.queue.push(song);
+        if (
+          message.guild.musicData.isPlaying == false ||
+          typeof message.guild.musicData.isPlaying == "undefined"
+        ) {
+          message.guild.musicData.isPlaying = true;
+          return this.playSong(message.guild.musicData.queue, message);
+        } else if (message.guild.musicData.isPlaying == true) {
+          return message.say(
+            `:musical_note: ${song.title} :musical_note: has been added to queue`
+          );
+        }
+      } catch (err) {
+      console.error(err);
+      return message.say("I'm afraid something has gone wrong.");
+      }
     }
 
     if (
@@ -46,8 +83,8 @@ module.exports = class PlayCommand extends Command {
           message.say("That's a long playlist! I'm just going to take the first 20 of those, if you don't mind.");
         }
         const videos = await playlist.getVideos(20);
-        videos.forEach(async (el) => {
-          const video = await el.fetch();
+        videos.forEach((el) => {
+          const video = el.fetch();
           let duration = this.parseDuration(video.duration);
           if (duration == "00:00") {
             duration = "Live Stream";
@@ -207,16 +244,17 @@ module.exports = class PlayCommand extends Command {
   playSong(queue, message) {
     let voiceChannel;
     const currentSong = queue[0];
-    console.log("PLAYING: ", currentSong);
-    queue[0].voiceChannel
+    currentSong.voiceChannel
       .join()
       .then((connection) => {
         const dispatcher = connection
           .play(
-            ytdl(queue[0].url, {
-              quality: "highestaudio",
-              highWaterMark: 1024 * 1024 * 10,
-            })
+            currentSong.flags.has("file") ? currentSong.url : ytdl(
+                currentSong.url, {
+                    quality: "highestaudio",
+                    highWaterMark: 1024 * 1024 * 10,
+                }
+            )
           )
           .on("start", () => {
             message.guild.musicData.songDispatcher = dispatcher;

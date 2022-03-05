@@ -11,6 +11,7 @@ Structures.extend('Guild', Guild => {
   class MusicGuild extends Guild {
     constructor(client, data) {
       super(client, data);
+      this.lastTip = '';
       this.musicData = {
         queue: [],
         playOrder: [],

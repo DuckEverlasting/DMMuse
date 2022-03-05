@@ -1,34 +1,17 @@
-require("dotenv").config()
+require("dotenv").config();
 
 module.exports = {
-
   development: {
-    client: 'pg',
+    client: "better-sqlite3",
     connection: {
-      host : 'localhost',
-      user : 'postgres',
-      password : 'postgrespass',
-      database : 'DMMuseDevelopment'
+      filename: "./data/db/dmm_dev.db3",
     },
     migrations: {
-      directory: './data/migrations'
+      directory: "./data/migrations",
     },
     seeds: {
-      directory: './data/seeds'
+      directory: "./data/seeds",
     },
-    useNullAsDefault: true
+    useNullAsDefault: true,
   },
-
-  production: {
-    client: 'pg',
-    connection: process.env.DATABASE_URL,
-    migrations: {
-      directory: './data/migrations'
-    },
-    seeds: {
-      directory: './data/seeds'
-    },
-    useNullAsDefault: true
-  }
-
 };

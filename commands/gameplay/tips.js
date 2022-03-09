@@ -13,7 +13,8 @@ module.exports = module.exports = class Strahd extends Command {
   }
 
   async run(message) {
-    const tips = await getTips().whereNot({ text: message.guild.lastTip });
+    const lastTip = message.guild?.lastTip || "";
+    const tips = await getTips().whereNot({ text: lastTip });
     const randIndex = Math.floor(Math.random() * tips.length);
     message.channel.send(tips[randIndex].text);
   }

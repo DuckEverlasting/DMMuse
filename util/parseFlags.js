@@ -1,4 +1,4 @@
-module.exports = function getFlags(flagsString) {
+module.exports = function(flagsString) {
   const flags = new Set();
   let nextFlag;
   const parseExp = /\s*\$\w+/gi;

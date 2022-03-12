@@ -11,6 +11,7 @@ Structures.extend('Guild', Guild => {
   class MusicGuild extends Guild {
     constructor(client, data) {
       super(client, data);
+      this.sessionStart = Date.now();
       this.lastTip = '';
       this.musicData = {
         queue: [],
@@ -37,6 +38,7 @@ client.registry
 	.registerGroups([
 		['gameplay', 'Gameplay'],
 		['music', 'Music'],
+        ['admin', 'Admin'],
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands()

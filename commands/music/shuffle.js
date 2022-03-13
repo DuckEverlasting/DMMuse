@@ -13,7 +13,7 @@ module.exports = class ShuffleCommand extends Command {
   }
   
   run(message) {
-    if (message.guild.musicData.queue.length == 0)
+    if (message.guild.jukebox.queue.length == 0)
       return message.say('There are no songs in queue!');
     function shuffleInPlace(array) {
       for (let i = 0; i < array.length; i++) {
@@ -24,7 +24,7 @@ module.exports = class ShuffleCommand extends Command {
       }
     }
 
-    shuffleInPlace(message.guild.musicData.queue)
+    shuffleInPlace(message.guild.jukebox.queue)
 
     return message.say(`Queue shuffled`);
   }

@@ -6,20 +6,13 @@ const path = require('path');
 
 const getDiceRequest = require('./argumentTypes/diceRequest');
 const getMusicRequest = require('./argumentTypes/musicRequest');
+const Jukebox = require('./classes/Jukebox');
 
 Structures.extend('Guild', Guild => {
   class MusicGuild extends Guild {
     constructor(client, data) {
       super(client, data);
-      this.musicData = {
-        queue: [],
-        playOrder: [],
-        isPlaying: false,
-        volume: .25,
-        songDispatcher: null,
-        loop: "none",
-        busy: false
-      };
+      this.jukebox = new Jukebox();
     }
   }
   return MusicGuild;

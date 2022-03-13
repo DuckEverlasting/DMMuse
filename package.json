@@ -13,7 +13,7 @@
     "nodemon": "^2.0.6",
     "pg": "^8.5.1",
     "simple-youtube-api": "^5.2.1",
-    "ytdl-core": "^4.0.0"
+    "ytdl-core": "^4.9.1"
   },
   "devDependencies": {
     "jest": "^25.5.4"

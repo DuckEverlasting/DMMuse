@@ -7,7 +7,7 @@ class DiceRequest extends ArgumentType {
 
   parse(val, msg, arg) {
     const parsed = []
-    const parseExp = /(((?<rolls>[+-]?\d+)d(?<sides>\d+))(?<addend>[+-]\d+)?(?<keep>kl?\d+)?|(?<constant>[+-]?\d+))/gi;
+    const parseExp = /(((?<rolls>[+-]?\d+)d(?<sides>\d+))(?<addend>[+-]\d+)?(?<keep>kl?\d*)?|(?<constant>[+-]?\d+))/gi;
     let res;
     do {
       res = parseExp.exec(val);
@@ -23,7 +23,7 @@ class DiceRequest extends ArgumentType {
 
   validate(val, msg, arg) {
     if (!val.length) {return false}
-    const parseExp = /(((?<rolls>[+-]?\d+)d(?<sides>\d+))(?<addend>[+-]\d+)?(?<keep>kl?\d+)?|(?<constant>[+-]?\d+))/g;
+    const parseExp = /(((?<rolls>[+-]?\d+)d(?<sides>\d+))(?<addend>[+-]\d+)?(?<keep>kl?\d*)?|(?<constant>[+-]?\d+))/g;
     return parseExp.test(val);
   }
 }

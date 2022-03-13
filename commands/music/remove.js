@@ -1,6 +1,6 @@
 const { Command } = require("discord.js-commando");
 
-module.exports = class SkipCommand extends Command {
+module.exports = class RemoveCommand extends Command {
   constructor(client) {
     super(client, {
       name: "remove-track",
@@ -20,10 +20,7 @@ module.exports = class SkipCommand extends Command {
   }
   
   async run(message, { target }) {
-    if (message.guild.musicData.queue.length == 0)
-      return message.say('There are no songs in queue!');
-    
-    message.guild.musicData.queue.splice(target, 1)
-    return message.say('Song removed');
+    const response = message.guild.jukebox.remove(target)
+    return message.say(response);
   }
 };

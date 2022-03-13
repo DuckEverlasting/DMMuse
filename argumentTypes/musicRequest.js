@@ -8,14 +8,14 @@ class MusicRequest extends ArgumentType {
   }
 
   parse(val, msg, arg) {
-    const initParse = (/^(?<html>[^\$]*)(?<flagsString>(\s*\$\w+)*)/i).exec(val);
-    let { html, flagsString } = initParse.groups;
+    const initParse = (/^(?<input>[^\$]*)(?<flagsString>(\s*\$\w+)*)/i).exec(val);
+    let { input, flagsString } = initParse.groups;
     const flags = parseFlags(flagsString);
 
-    if (html.startsWith("<") && html.endsWith(">")) {
-      html = getVar(html.slice(1, val.length - 1), msg.author.id);
+    if (input.startsWith("<") && input.endsWith(">")) {
+      input = getVar(input.slice(1, val.length - 1), msg.author.id);
     }
-    return {html, flags};
+    return {input, flags};
   }
 
   validate(val, msg, arg) {

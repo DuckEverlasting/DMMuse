@@ -14,12 +14,9 @@ module.exports = class QueueCommand extends Command {
   }
 
   run(message) {
-    if (message.guild.musicData.queue.length == 0)
+    if (message.guild.jukebox.queue.length == 0)
       return message.say('There are no songs in queue!');
-    const titleArray = [];
-    message.guild.musicData.queue.map(obj => {
-      titleArray.push(obj.title);
-    });
+    const titleArray = message.guild.jukebox.queue.map(song => song.title);
     var queueEmbed = new MessageEmbed()
       .setColor('#fafa32')
       .setTitle('Current Music Queue');

@@ -36,8 +36,7 @@ module.exports = class SkipCommand extends Command {
       }
     }
 
-    message.guild.musicData.loop = type;
-
+    message.guild.jukebox.loop = type;
     return message.say(`Loop: ${type}`);
   }
 };

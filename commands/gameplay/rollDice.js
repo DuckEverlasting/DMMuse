@@ -28,7 +28,7 @@ module.exports = module.exports = class RollDice extends Command {
           new Number(match.groups.sides),
           new Number(match.groups.rolls),
           match.groups.addend ? new Number(match.groups.addend) : undefined,
-          match.groups.keep ? new Number(match.groups.keep.match(/\d+/)) : undefined,
+          match.groups.keep ? new Number(match.groups.keep.match(/\d+/) || 1): undefined,
           match.groups.keep ? match.groups.keep.includes("l") : undefined
         )
       }

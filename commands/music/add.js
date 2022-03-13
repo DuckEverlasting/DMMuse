@@ -1,15 +1,14 @@
 const { Command } = require("discord.js-commando");
 const getSongsFromInput = require("../../util/getSongsFromInput");
 
-module.exports = class PlayCommand extends Command {
+module.exports = class AddCommand extends Command {
   constructor(client) {
     super(client, {
-      name: "play-music",
-      aliases: ["play", "p"],
-      memberName: "play-music",
+      name: "add-to-queue",
+      aliases: ["add", "enqueue"],
+      memberName: "add-to-queue",
       group: "music",
-      description:
-        'Play any song or playlist from Youtube.', //To use saved variables, surround them in greater/less than brackets like <this>. Flags are added at the end with the "$" symbol.
+      description: "Add song to the queue.",
       guildOnly: true,
       clientPermissions: ["SPEAK", "CONNECT"],
       args: [
@@ -36,8 +35,13 @@ module.exports = class PlayCommand extends Command {
 
     const songs = await getSongsFromInput(message, input);
     if (songs) {
-      message.guild.jukebox.queue = songs;
-      message.guild.jukebox.play(message);
+      if (!message.guild.jukebox.queue.length) {
+        message.guild.jukebox.enqueue(songs);
+        message.guild.jukebox.play(message);
+      } else {
+        message.guild.jukebox.enqueue(songs);
+      }
+      message.say(`${songs.length ? "Songs" : "Song"} added to queue!`)
     }
   }
 };

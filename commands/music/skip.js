@@ -13,18 +13,6 @@ module.exports = class SkipCommand extends Command {
   }
   
   async run(message) {
-    const dispatcher = message.guild.musicData.songDispatcher;
-    if (dispatcher.busy) { return }
-    const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.reply('I can only do that if you\'re in a voice channel. Join a channel and try again');
-
-    if (
-      typeof dispatcher == 'undefined' ||
-      dispatcher == null
-    ) {
-      return message.say('Um... sorry, looks like there is no song playing right now.');
-    }
-
-    dispatcher.end();
+    message.guild.jukebox.skip(message);
   }
 };

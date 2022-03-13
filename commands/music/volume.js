@@ -36,8 +36,8 @@ module.exports = class PauseCommand extends Command {
       flags.add("fade");
     }
     target /= 50;
-    const dispatcher = message.guild.musicData.songDispatcher;
-    if (dispatcher.busy) { return }
+    const dispatcher = message.guild.jukebox.connection?.dispatcher;
+    if (dispatcher?.busy) { return }
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.reply('I can only do that if you\'re in a voice channel. Join a channel and try again');
 
@@ -45,17 +45,14 @@ module.exports = class PauseCommand extends Command {
       typeof dispatcher == 'undefined' ||
       dispatcher == null
     ) {
-      return message.say('Um... sorry, looks like there is no song playing right now.');
-    }
-
-    if (flags.has("fade") || flags.has("f")) {
+    } else if (flags.has("fade") || flags.has("f")) {
       dispatcher.busy = true;
       await fade(dispatcher, target);
       dispatcher.busy = false;
     } else {
       dispatcher.setVolume(target);
     }
-
+    message.guild.jukebox.volume = target;
     message.say('Volume set');
   }
 };

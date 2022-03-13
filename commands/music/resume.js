@@ -23,20 +23,6 @@ module.exports = class ResumeCommand extends Command {
 
   async run(message, { flags }) {
     flags = parseFlags(flags);
-    const dispatcher = message.guild.musicData.songDispatcher;
-    if (dispatcher.busy) { return }
-
-    const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.reply('I can only do that if you\'re in a voice channel. Join a channel and try again');
-  
-    if (
-      typeof dispatcher == 'undefined' ||
-      dispatcher === null
-    ) {
-      return message.reply('Um... sorry, looks like there is no song paused right now.');
-    }
-
-    message.say('Song resumed :play_pause:');
-    dispatcher.resume();
+    message.guild.jukebox.resume(message);
   }
 };

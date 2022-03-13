@@ -12,6 +12,8 @@ Structures.extend('Guild', Guild => {
   class MusicGuild extends Guild {
     constructor(client, data) {
       super(client, data);
+      this.sessionStart = Date.now();
+      this.lastTip = '';
       this.jukebox = new Jukebox();
     }
   }
@@ -29,6 +31,7 @@ client.registry
 	.registerGroups([
 		['gameplay', 'Gameplay'],
 		['music', 'Music'],
+        ['admin', 'Admin'],
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands()

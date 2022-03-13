@@ -1,0 +1,440 @@
+{
+    "cards": {
+        "high_deck": [
+            {
+                "deck": "high",
+                "name": "Artifact",
+                "represents": "The importance of some physical object that must be obtained, protected, or destroyed at all costs",
+                "image": "dnd_tarokka_artifact.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Beast",
+                "represents": "Great rage or passion; something bestial or malevolent hiding in plain sight or lurking just below the surface",
+                "image": "dnd_tarokka_beast.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Broken",
+                "represents": "One Defeat, failure, and despair; the loss of something or someone important, without which one feels incomplete",
+                "image": "dnd_tarokka_brokenone.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Darklord",
+                "represents": "A single, powerful individual of an evil nature, one whose goals have enormous and far-reaching consequences",
+                "image": "dnd_tarokka_darklord.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Donjon",
+                "represents": "Isolation and imprisonment; being so conservative in thinking as to be a prisoner of one's own beliefs",
+                "image": "dnd_tarokka_donjon.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Ghost",
+                "represents": "The looming past; the return of an old enemy or the discovery of a secret buried long ago",
+                "image": "dnd_tarokka_ghost.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Executioner",
+                "represents": "The imminent death of one rightly or wrongly convicted of a crime; false accusations and unjust prosecution",
+                "image": "dnd_tarokka_executioner.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Horseman",
+                "represents": "Death; disaster in the form of the loss of wealth or property, a horrible defeat, or the end of a bloodline",
+                "image": "dnd_tarokka_horseman.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Innocent",
+                "represents": "A being of great importance whose life is in danger (who might be helpless or simply unaware of the peril)",
+                "image": "dnd_tarokka_innocent.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Marionette",
+                "represents": "The presence of a spy or a minion of some greater power; an encounter with a puppet or an underling",
+                "image": "dnd_tarokka_marionette.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Mists",
+                "represents": "Something unexpected or mysterious that can't be avoided; a great quest or journey that will try one's spirit",
+                "image": "dnd_tarokka_mists.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Raven",
+                "represents": "A hidden source of information; a fortunate turn of events; a secret potential for good",
+                "image": "dnd_tarokka_raven.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Seer",
+                "represents": "Inspiration and keen intellect; a future event, the outcome of which will hinge on a clever mind",
+                "image": "dnd_tarokka_seer.png",
+                "number": null,
+                "suit": null
+            },
+            {
+                "deck": "high",
+                "name": "Tempter",
+                "represents": "One who has been compromised or led astray by temptation or foolishness; one who tempts others for evil ends",
+                "image": "dnd_tarokka_tempter.png",
+                "number": null,
+                "suit": null
+            }
+        ],
+        "common_deck": [
+            {
+                "deck": "common",
+                "name": "Warrior",
+                "represents": "Strength and force personified; violence; those who use force to accomplish their goals",
+                "image": "dnd_tarokka_warrior.png",
+                "number": "Master",
+                "suit": "Swords"
+            },
+            {
+                "deck": "common",
+                "name": "Avenger",
+                "represents": "Justice and revenge for great wrongs; those on a quest to rid the world of great evil",
+                "image": "dnd_tarokka_avenger.png",
+                "number": "One",
+                "suit": "Swords"
+            },
+            {
+                "deck": "common",
+                "name": "Paladin",
+                "represents": "Just and noble warriors; those who live by a code of honor and integrity",
+                "image": "dnd_tarokka_paladin.png",
+                "number": "Two",
+                "suit": "Swords"
+            },
+            {
+                "deck": "common",
+                "name": "Soldier",
+                "represents": "War and sacrifice; the stamina to endure great hardship",
+                "image": "dnd_tarokka_soldier.png",
+                "number": "Three",
+                "suit": "Swords"
+            },
+            {
+                "deck": "common",
+                "name": "Mercenary",
+                "represents": "Inner strength and fortitude; those who fight for power or wealth",
+                "image": "dnd_tarokka_mercenary.png",
+                "number": "Four",
+                "suit": "Swords"
+            },
+            {
+                "deck": "common",
+                "name": "Myrmidon",
+                "represents": "Great heroes; a sudden reversal of fate; the triumph of the underdog over a mighty enemy",
+                "image": "dnd_tarokka_myrmidon.png",
+                "number": "Five",
+                "suit": "Swords"
+            },
+            {
+                "deck": "common",
+                "name": "Berserker",
+                "represents": "The brutal and barbaric side of warfare; bloodlust; those with a bestial nature",
+                "image": "dnd_tarokka_berserker.png",
+                "number": "Six",
+                "suit": "Swords"
+            },
+            {
+                "deck": "common",
+                "name": "Hooded One",
+                "represents": "Bigotry, intolerance, and xenophobia; a mysterious presence or newcomer",
+                "image": "dnd_tarokka_hoodedone.png",
+                "number": "Seven",
+                "suit": "Swords"
+            },
+            {
+                "deck": "common",
+                "name": "Dictator",
+                "represents": "All that is wrong with government and leadership; those who rule through fear and violence",
+                "image": "dnd_tarokka_dictator.png",
+                "number": "Eight",
+                "suit": "Swords"
+            },
+            {
+                "deck": "common",
+                "name": "Torturer",
+                "represents": "The coming of suffering or merciless cruelty; one who is irredeemably evil or sadistic",
+                "image": "dnd_tarokka_torturer.png",
+                "number": "Nine",
+                "suit": "Swords"
+            },
+            {
+                "deck": "common",
+                "name": "Wizard",
+                "represents": "Mystery and riddles; the unknown; those who crave magical power and great knowledge",
+                "image": "dnd_tarokka_wizard.png",
+                "number": "Master",
+                "suit": "Stars"
+            },
+            {
+                "deck": "common",
+                "name": "Transmuter",
+                "represents": "A new discovery; the coming of unexpected things; unforeseen consequences and chaos",
+                "image": "dnd_tarokka_transmuter.png",
+                "number": "One",
+                "suit": "Stars"
+            },
+            {
+                "deck": "common",
+                "name": "Diviner",
+                "represents": "The pursuit of knowledge tempered by wisdom; truth and honesty; sages and prophecy",
+                "image": "dnd_tarokka_diviner.png",
+                "number": "Two",
+                "suit": "Stars"
+            },
+            {
+                "deck": "common",
+                "name": "Enchanter",
+                "represents": "Inner turmoil that comes from confusion, fear of failure, or false information",
+                "image": "dnd_tarokka_enchanter.png",
+                "number": "Three",
+                "suit": "Stars"
+            },
+            {
+                "deck": "common",
+                "name": "Abjurer",
+                "represents": "Those guided by logic and reasoning; warns of an overlooked clue or piece of information",
+                "image": "dnd_tarokka_abjurer.png",
+                "number": "Four",
+                "suit": "Stars"
+            },
+            {
+                "deck": "common",
+                "name": "Elementalist",
+                "represents": "The triumph of nature over civilization; natural disasters and bountiful harvests",
+                "image": "dnd_tarokka_elementalist.png",
+                "number": "Five",
+                "suit": "Stars"
+            },
+            {
+                "deck": "common",
+                "name": "Evoker",
+                "represents": "Magical or supernatural power that can't be controlled; magic for destructive ends",
+                "image": "dnd_tarokka_evoker.png",
+                "number": "Six",
+                "suit": "Stars"
+            },
+            {
+                "deck": "common",
+                "name": "Illusionist",
+                "represents": "Lies and deceit; grand conspiracies; secret societies; the presence of a dupe or a saboteur",
+                "image": "dnd_tarokka_illusionist.png",
+                "number": "Seven",
+                "suit": "Stars"
+            },
+            {
+                "deck": "common",
+                "name": "Necromancer",
+                "represents": "Unnatural events and unhealthy obsessions; those who follow a destructive path",
+                "image": "dnd_tarokka_necromancer.png",
+                "number": "Eight",
+                "suit": "Stars"
+            },
+            {
+                "deck": "common",
+                "name": "Conjurer",
+                "represents": "The coming of an unexpected supernatural threat; those who think of themselves as gods",
+                "image": "dnd_tarokka_conjurer.png",
+                "number": "Nine",
+                "suit": "Stars"
+            },
+            {
+                "deck": "common",
+                "name": "Rogue",
+                "represents": "Anyone for whom money is important; those who believe money is the key to their success",
+                "image": "dnd_tarokka_rogue.png",
+                "number": "Master",
+                "suit": "Coins"
+            },
+            {
+                "deck": "common",
+                "name": "Swashbuckler",
+                "represents": "Those who like money yet give it up freely; likable rogues and rapscallions",
+                "image": "dnd_tarokka_swashbuckler.png",
+                "number": "One",
+                "suit": "Coins"
+            },
+            {
+                "deck": "common",
+                "name": "Philanthropist",
+                "represents": "Charity and giving on a grand scale; those who use wealth to fight evil and sickness",
+                "image": "dnd_tarokka_philanthropist.png",
+                "number": "Two",
+                "suit": "Coins"
+            },
+            {
+                "deck": "common",
+                "name": "Trader",
+                "represents": "Commerce; smuggling and black markets; fair and equitable trades",
+                "image": "dnd_tarokka_trader.png",
+                "number": "Three",
+                "suit": "Coins"
+            },
+            {
+                "deck": "common",
+                "name": "Merchant",
+                "represents": "A rare commodity or business opportunity; deceitful or dangerous business transactions",
+                "image": "dnd_tarokka_merchant.png",
+                "number": "Four",
+                "suit": "Coins"
+            },
+            {
+                "deck": "common",
+                "name": "Guild Member",
+                "represents": "Like-minded individuals joined together in a common goal; pride in one's work",
+                "image": "dnd_tarokka_guildmember.png",
+                "number": "Five",
+                "suit": "Coins"
+            },
+            {
+                "deck": "common",
+                "name": "Beggar",
+                "represents": "Sudden change in economic status or fortune",
+                "image": "dnd_tarokka_beggar.png",
+                "number": "Six",
+                "suit": "Coins"
+            },
+            {
+                "deck": "common",
+                "name": "Thief",
+                "represents": "Those who steal or burgle; a loss of property, beauty, innocence, friendship, or reputation",
+                "image": "dnd_tarokka_thief.png",
+                "number": "Seven",
+                "suit": "Coins"
+            },
+            {
+                "deck": "common",
+                "name": "Tax Collector",
+                "represents": "Corruption; honesty in an otherwise corrupt government or organization",
+                "image": "dnd_tarokka_taxcollector.png",
+                "number": "Eight",
+                "suit": "Coins"
+            },
+            {
+                "deck": "common",
+                "name": "Miser",
+                "represents": "Hoarded wealth; those who are irreversibly unhappy or who think money is meaningless",
+                "image": "dnd_tarokka_miser.png",
+                "number": "Nine",
+                "suit": "Coins"
+            },
+            {
+                "deck": "common",
+                "name": "Priest",
+                "represents": "Enlightenment; those who follow a deity, a system of values, or a higher purpose",
+                "image": "dnd_tarokka_priest.png",
+                "number": "Master",
+                "suit": "Glyphs"
+            },
+            {
+                "deck": "common",
+                "name": "Monk",
+                "represents": "Serenity; inner strength and self-reliance; supreme confidence bereft of arrogance",
+                "image": "dnd_tarokka_monk.png",
+                "number": "One",
+                "suit": "Glyphs"
+            },
+            {
+                "deck": "common",
+                "name": "Missionary",
+                "represents": "Those who spread wisdom and faith to others; warnings of the spread of fear and ignorance",
+                "image": "dnd_tarokka_missionary.png",
+                "number": "Two",
+                "suit": "Glyphs"
+            },
+            {
+                "deck": "common",
+                "name": "Healer",
+                "represents": "Healing; a contagious illness, disease, or curse; those who practice the healing arts",
+                "image": "dnd_tarokka_healer.png",
+                "number": "Three",
+                "suit": "Glyphs"
+            },
+            {
+                "deck": "common",
+                "name": "Shepherd",
+                "represents": "Those who protect others; one who bears a burden far too great to be shouldered alone",
+                "image": "dnd_tarokka_shepherd.png",
+                "number": "Four",
+                "suit": "Glyphs"
+            },
+            {
+                "deck": "common",
+                "name": "Druid",
+                "represents": "The ambivalence and cruelty of nature and those who feel drawn to it; inner turmoil",
+                "image": "dnd_tarokka_druid.png",
+                "number": "Five",
+                "suit": "Glyphs"
+            },
+            {
+                "deck": "common",
+                "name": "Anarchist",
+                "represents": "A fundamental change brought on by one whose beliefs are being put to the test",
+                "image": "dnd_tarokka_anarchist.png",
+                "number": "Six",
+                "suit": "Glyphs"
+            },
+            {
+                "deck": "common",
+                "name": "Charlatan",
+                "represents": "Liars; those who profess to believe one thing but actually believe another",
+                "image": "dnd_tarokka_charlatan.png",
+                "number": "Seven",
+                "suit": "Glyphs"
+            },
+            {
+                "deck": "common",
+                "name": "Bishop",
+                "represents": "Strict adherence to a code or a belief; those who plot, plan, and scheme",
+                "image": "dnd_tarokka_bishop.png",
+                "number": "Eight",
+                "suit": "Glyphs"
+            },
+            {
+                "deck": "common",
+                "name": "Traitor",
+                "represents": "Betrayal by someone close and trusted; a weakening or loss of faith",
+                "image": "dnd_tarokka_traitor.png",
+                "number": "Nine",
+                "suit": "Glyphs"
+            }
+        ]
+    }
+}

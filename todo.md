@@ -36,3 +36,5 @@ TODOS
     - Choosing a song from a search term
     - Picking a tip to edit/delete
     - um... that may be it.
+
+- Implement full logging (including errors)

@@ -39,6 +39,7 @@ client.registry
 		['gameplay', 'Gameplay'],
 		['music', 'Music'],
         ['admin', 'Admin'],
+        ['miscellaneous', 'Miscellaneous'],
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands()
@@ -55,40 +56,3 @@ client.once('reconnecting', () => {
 client.once('disconnect', () => {
   console.log('Disconnect!');
 });
-
-// const genRoom = require ('./commands/gameplay/generateRoom.js');
-// const rollDice = require("./commands/gameplay/rollDice.js");
-// const { setUserVar, setGlobalVar, getVar } = require("./actions/useSavedVariables.js");
-
-// const actions = {
-//   "roll": rollDice,
-//   "save": setUserVar,
-//   "load": getVar,
-//   "get_a_room": genRoom,
-//   "play": null,
-//   "pause": null,
-//   "stop": null,
-//   "skip": null,
-// }
-
-// client.on('message', async message => {
-//   if (message.author.bot) return;
-
-//   let parsedCommand;
-//   if (message.channel.type === "dm" || message.content.startsWith(prefix)) {
-//     parsedCommand = parseCommand(message);
-//   } else {
-//     return;
-//   }
-
-//   if (!parsedCommand.error) {
-//     try {
-//       message.channel.send(await actions[parsedCommand.action](parsedCommand));
-//     } catch(error) {
-//       console.error(error);
-//     }
-//   } else {
-//     console.log(parsedCommand.error);
-//     message.channel.send("Were you talking to me? Sorry, I don't know that command.");
-//   }
-// });

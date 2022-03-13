@@ -13,7 +13,7 @@
     "ffmpeg-static": "^4.4.1",
     "fs": "0.0.1-security",
     "knex": "^1.0.3",
-    "nodemon": "^2.0.15",
+    "pm2": "^5.2.0",
     "simple-youtube-api": "^5.2.1",
     "ytdl-core": "^4.10.1"
   },
@@ -21,9 +21,11 @@
     "jest": "^25.5.4"
   },
   "scripts": {
-    "start": "node index.js",
-    "server": "nodemon index.js",
-    "test": "cross-env DB_ENV=testing jest --watch"
+    "prod": "pm2 start index.js --name DMMuse --time",
+    "dev": "pm2 start index.js --watch --name DMMuse (dev)",
+    "test": "cross-env DB_ENV=testing jest --watch",
+    "status": "pm2 ls",
+    "logs": "pm2 logs"
   },
   "jest": {
     "testEnvironment": "node"

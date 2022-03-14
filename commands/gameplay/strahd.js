@@ -1,4 +1,4 @@
-const { Command } = require("discord.js-commando");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = module.exports = class Strahd extends Command {
   constructor(client) {
@@ -10,7 +10,7 @@ module.exports = module.exports = class Strahd extends Command {
     });
   }
 
-  run(message) {
-        message.channel.send("BLEH!");
+  run(interaction) {
+        interaction.channel.send("BLEH!");
   }
 };

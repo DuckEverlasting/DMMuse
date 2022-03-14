@@ -1,5 +1,5 @@
-const { Command } = require("discord.js-commando");
-const { MessageEmbed } = require("discord.js");
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { interactionEmbed } = require("discord.js");
 const {
   getTips,
   getTipsByUser,
@@ -19,18 +19,18 @@ module.exports = module.exports = class EditTips extends Command {
     });
   }
 
-  async run(message) {
+  async run(interaction) {
     let tips;
-    const user = await getUser(message.author.id);
+    const user = await getUser(interaction.author.id);
     if (user.role == "ADMIN") {
       tips = await getTips();
     } else {
       tips = await getTipsByUser(user.id);
     }
-    return this.editTipsDialog(message, tips);
+    return this.editTipsDialog(interaction, tips);
   }
 
-  async editTipsDialog(message, tips, pointerParam = 0) {
+  async editTipsDialog(interaction, tips, pointerParam = 0) {
     let pointer = pointerParam;
     let tipIndex;
     const acceptableResponses = ['exit'];
@@ -54,11 +54,11 @@ module.exports = module.exports = class EditTips extends Command {
     if (pointer + 5 < tips.length) {
         acceptableResponses.push("next");
     }
-    let msgEmbed = await message.say({ embed });
+    let msgEmbed = await interaction.reply({ embed });
 
     try {
-      const selectTipResponse = await message.channel.awaitMessages(
-        (msg) => msg.author.id === message.author.id,
+      const selectTipResponse = await interaction.channel.awaitMessages(
+        (msg) => msg.author.id === interaction.author.id,
         {
           max: 1,
           maxProcessed: 1,
@@ -75,27 +75,27 @@ module.exports = module.exports = class EditTips extends Command {
             return msgEmbed.delete();
           case "next":
             msgEmbed.delete();
-            return this.editTipsDialog(message, tips, pointer + 5);
+            return this.editTipsDialog(interaction, tips, pointer + 5);
           case "previous":
             msgEmbed.delete();
-            return this.editTipsDialog(message, tips, pointer - 5);
+            return this.editTipsDialog(interaction, tips, pointer - 5);
         }
       } else {
-        return message.say("Invalid option, please try again.");
+        return interaction.reply("Invalid option, please try again.");
       }
     } catch (err) {
       console.error(err);
       msgEmbed.delete();
-      return message.say("Invalid option, please try again.");
+      return interaction.reply("Invalid option, please try again.");
     }
 
     const tipDisplayEmbed = new MessageEmbed()
       .setColor("#fafa32")
       .setTitle('Type "Edit", "Delete", or "Exit"')
       .addField("Current Text", tips[tipIndex].text);
-    msgEmbed = await message.say({ embed: tipDisplayEmbed });
+    msgEmbed = await interaction.reply({ embed: tipDisplayEmbed });
     try {
-      var selectActionResponse = await message.channel.awaitMessages(
+      var selectActionResponse = await interaction.channel.awaitMessages(
         (msg) => ["edit", "delete", "exit"].includes(msg.content.toLowerCase()),
         {
           max: 1,
@@ -107,24 +107,24 @@ module.exports = module.exports = class EditTips extends Command {
     } catch {
       console.error(err);
       msgEmbed.delete();
-      return message.say("Invalid option, please try again.");
+      return interaction.reply("Invalid option, please try again.");
     }
     switch (selectActionResponse.first().content) {
       case "exit":
         return msgEmbed.delete();
       case "edit":
-        return this.handleEditTip(message, tips[tipIndex]);
+        return this.handleEditTip(interaction, tips[tipIndex]);
       case "delete":
-        return this.handleDeleteTip(message, tips[tipIndex]);
+        return this.handleDeleteTip(interaction, tips[tipIndex]);
     }
   }
 
-  async handleEditTip(message, tip) {
-    return message.say("Well you can't! It's not implemented yet!");
+  async handleEditTip(interaction, tip) {
+    return interaction.reply("Well you can't! It's not implemented yet!");
   }
 
-  async handleDeleteTip(message, tip) {
+  async handleDeleteTip(interaction, tip) {
     await removeTip(tip.id);
-    return message.say("Tip deleted!");
+    return interaction.reply("Tip deleted!");
   }
 };

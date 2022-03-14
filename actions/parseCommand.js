@@ -60,7 +60,7 @@ module.exports = function parseCommand(command, author, type) {
   const result = {
     action: "",
     params: [],
-    message,
+    interaction,
     error: ""
   };
 

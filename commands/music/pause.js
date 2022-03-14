@@ -21,8 +21,8 @@ module.exports = class PauseCommand extends Command {
     });
   }
 
-  async run(message, { flags }) {
+  async run(interaction, { flags }) {
     flags = parseFlags(flags);
-    message.guild.jukebox.pause(message);
+    interaction.guild.jukebox.pause(interaction);
   }
 };

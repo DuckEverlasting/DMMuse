@@ -1,4 +1,4 @@
-const { Command } = require("discord.js-commando");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = class SkipCommand extends Command {
   constructor(client) {
@@ -21,9 +21,9 @@ module.exports = class SkipCommand extends Command {
     });
   }
   
-  async run(message, { type }) {
+  async run(interaction, { type }) {
     if (type === "toggle") {
-      switch(message.guild.musicData.loop) {
+      switch(interaction.guild.musicData.loop) {
         case "none":
           type = "current"
           break;
@@ -36,7 +36,7 @@ module.exports = class SkipCommand extends Command {
       }
     }
 
-    message.guild.jukebox.loop = type;
-    return message.say(`Loop: ${type}`);
+    interaction.guild.jukebox.loop = type;
+    return interaction.reply(`Loop: ${type}`);
   }
 };

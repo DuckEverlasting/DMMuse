@@ -1,12 +1,12 @@
 require('dotenv').config();
 
-const { CommandoClient } = require('discord.js-commando');
-const { Structures } = require('discord.js');
+const { Client, Intents } = require('discord.js');
 const path = require('path');
 
 const getDiceRequest = require('./argumentTypes/diceRequest');
 const getMusicRequest = require('./argumentTypes/musicRequest');
 const Jukebox = require('./classes/Jukebox');
+const commands = require('./commands');
 
 Structures.extend('Guild', Guild => {
   class MusicGuild extends Guild {
@@ -20,23 +20,15 @@ Structures.extend('Guild', Guild => {
   return MusicGuild;
 });
 
-const client = new CommandoClient({
-	commandPrefix: process.env.PREFIX || '!dmm',
-	owner: '271003111236042753'
-});
+const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-client.registry
-  .registerDefaultTypes()
-  .registerTypes([getDiceRequest(client), getMusicRequest(client)])
-	.registerGroups([
-		['gameplay', 'Gameplay'],
-		['music', 'Music'],
-        ['admin', 'Admin'],
-        ['miscellaneous', 'Miscellaneous'],
-	])
-	.registerDefaultGroups()
-	.registerDefaultCommands()
-	.registerCommandsIn(path.join(__dirname, 'commands'));
+const guildStates = {}
+
+client.on('interactionCreate', async interaction => {
+	if (interaction.isCommand()) {
+        await commands[interaction.commandName]?.run?.(interaction, guildStates);
+    }
+});
 
 client.login(process.env.TOKEN);
 

@@ -1,4 +1,4 @@
-const { Command } = require("discord.js-commando");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const getSongsFromInput = require("../../util/getSongsFromInput");
 
 module.exports = class PlayCommand extends Command {
@@ -22,22 +22,22 @@ module.exports = class PlayCommand extends Command {
     });
   }
 
-  async run(message, { query }) {
-    const voiceChannel = message.member.voice.channel;
+  async run(interaction, { query }) {
+    const voiceChannel = interaction.member.voice.channel;
     let { input, flags } = query;
     input = input.trim();
 
     if (!voiceChannel) {
-      message.say(
+      interaction.reply(
         "I can only play music in voice channels. Join a voice channel and try again."
       );
       return;
     }
 
-    const songs = await getSongsFromInput(message, input);
+    const songs = await getSongsFromInput(interaction, input);
     if (songs) {
-      message.guild.jukebox.queue = songs;
-      message.guild.jukebox.play(message);
+      interaction.guild.jukebox.queue = songs;
+      interaction.guild.jukebox.play(interaction);
     }
   }
 };

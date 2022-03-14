@@ -21,8 +21,8 @@ module.exports = class ResumeCommand extends Command {
     });
   }
 
-  async run(message, { flags }) {
+  async run(interaction, { flags }) {
     flags = parseFlags(flags);
-    message.guild.jukebox.resume(message);
+    interaction.guild.jukebox.resume(interaction);
   }
 };

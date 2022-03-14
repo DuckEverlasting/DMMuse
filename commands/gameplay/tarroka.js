@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { Command } = require("discord.js-commando");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const tarrokaData = require("../../tarroka_data.json");
 const { createCanvas, loadImage } = require("canvas");
 const { dirname } = require("path");
@@ -15,7 +15,7 @@ module.exports = module.exports = class Tarroka extends Command {
     });
   }
 
-  run(message) {
+  run(interaction) {
     const [leftCard, topCard, rightCard] = this.getCards(3, tarrokaData.cards.common_deck);
     const [middleCard, bottomCard] = this.getCards(2, tarrokaData.cards.high_deck);
 
@@ -24,18 +24,18 @@ module.exports = module.exports = class Tarroka extends Command {
       .join("\n\n");
 
     let placeholderMessage;
-    message.channel
+    interaction.channel
       .send("Placing the cards...")
       .then((msg) => (placeholderMessage = msg))
       .then(() =>
         this.render(leftCard, topCard, rightCard, middleCard, bottomCard)
       )
       .then(() => {
-        message.channel
+        interaction.channel
           .send("", { files: [`${__maindir}\\media\\latestReading.png`] })
           .then(() => {
             placeholderMessage.delete();
-            message.channel.send("\n" + messageText);
+            interaction.channel.send("\n" + messageText);
           });
       });
   }

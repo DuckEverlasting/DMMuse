@@ -1,4 +1,4 @@
-const { Command } = require("discord.js-commando");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getTips } = require("../../data/controllers/tipsController");
 
 module.exports = module.exports = class Strahd extends Command {
@@ -12,10 +12,10 @@ module.exports = module.exports = class Strahd extends Command {
     });
   }
 
-  async run(message) {
-    const lastTip = message.guild?.lastTip || "";
+  async run(interaction) {
+    const lastTip = interaction.guild?.lastTip || "";
     const tips = await getTips().whereNot({ text: lastTip });
     const randIndex = Math.floor(Math.random() * tips.length);
-    message.channel.send(tips[randIndex].text);
+    interaction.channel.send(tips[randIndex].text);
   }
 };

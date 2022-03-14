@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@discordjs/builders": "^0.12.0",
     "@discordjs/opus": "^0.7.0",
+    "@discordjs/rest": "^0.3.0",
     "better-sqlite3": "^7.5.0",
     "canvas": "^2.9.0",
-    "discord.js": "^12.5.3",
-    "discord.js-commando": "github:discordjs/Commando",
+    "discord-api-types": "^0.29.0",
+    "discord.js": "^13.6.0",
     "dotenv": "^8.6.0",
     "ffmpeg-static": "^4.4.1",
     "fs": "0.0.1-security",
@@ -22,7 +24,7 @@
   },
   "scripts": {
     "prod": "pm2 start index.js --name DMMuse --time",
-    "dev": "pm2 start index.js --watch --name DMMuse (dev)",
+    "dev": "pm2 start index.js --watch --name DMMuse",
     "test": "cross-env DB_ENV=testing jest --watch",
     "status": "pm2 ls",
     "logs": "pm2 logs"

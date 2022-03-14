@@ -1,4 +1,4 @@
-const { Command } = require("discord.js-commando");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { insertTip } = require("../../data/controllers/tipsController");
 const addUserIfNew = require('../../util/addUserIfNew');
 
@@ -20,9 +20,9 @@ module.exports = module.exports = class AddTip extends Command {
     });
   }
 
-  async run(message, { text }) {
-    await addUserIfNew(message.author);
-    await insertTip(text, message.author.id);
-    message.channel.send("Added!");
+  async run(interaction, { text }) {
+    await addUserIfNew(interaction.author);
+    await insertTip(text, interaction.author.id);
+    interaction.channel.send("Added!");
   }
 };

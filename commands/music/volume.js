@@ -30,16 +30,16 @@ module.exports = class PauseCommand extends Command {
     });
   }
 
-  async run(message, { target, flags }) {
+  async run(interaction, { target, flags }) {
     flags = parseFlags(flags);
-    if (message.content.startsWith(process.env.PREFIX + "fade")) {
+    if (interaction.content.startsWith(process.env.PREFIX + "fade")) {
       flags.add("fade");
     }
     target /= 50;
-    const dispatcher = message.guild.jukebox.connection?.dispatcher;
+    const dispatcher = interaction.guild.jukebox.connection?.dispatcher;
     if (dispatcher?.busy) { return }
-    const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.reply('I can only do that if you\'re in a voice channel. Join a channel and try again');
+    const voiceChannel = interaction.member.voice.channel;
+    if (!voiceChannel) return interaction.reply('I can only do that if you\'re in a voice channel. Join a channel and try again');
 
     if (
       typeof dispatcher == 'undefined' ||
@@ -52,7 +52,7 @@ module.exports = class PauseCommand extends Command {
     } else {
       dispatcher.setVolume(target);
     }
-    message.guild.jukebox.volume = target;
-    message.say('Volume set');
+    interaction.guild.jukebox.volume = target;
+    interaction.reply('Volume set');
   }
 };

@@ -38,26 +38,26 @@ module.exports = class Jukebox {
     }
   }
 
-  checkConnection(message) {
-    const voiceChannel = message.member.voice.channel;
+  checkConnection(interaction) {
+    const voiceChannel = interaction.member.voice.channel;
     return this.connection?.channel?.id == voiceChannel.id;
   }
 
-  async setConnection(message) {
+  async setConnection(interaction) {
     if (this.connection) {
       await this.connection.dispatcher?.end();
     }
-    this.connection = await message.member.voice.channel.join();
+    this.connection = await interaction.member.voice.channel.join();
   }
 
-  async play(message) {
+  async play(interaction) {
     if (this.isBusy) {
       return;
     }
     this.isBusy = true;
 
-    if (!this.checkConnection(message)) {
-      await this.setConnection(message);
+    if (!this.checkConnection(interaction)) {
+      await this.setConnection(interaction);
     }
 
     const song = this.queue[0];
@@ -65,18 +65,18 @@ module.exports = class Jukebox {
     try {
       await this.connection.play(song.getResource());
     } catch(e) {
-      return this.handleError(message, e);
+      return this.handleError(interaction, e);
     }
 
     this.connection.dispatcher.on("start", () => {
       this.connection.dispatcher.setVolume(this.volume);
-      message.say(song.getVideoEmbed());
+      interaction.reply(song.getVideoEmbed());
     });
 
     this.connection.dispatcher.on("finish", () => {
       this.updateQueue();
       if (this.queue.length >= 1) {
-        return this.play(message);
+        return this.play(interaction);
       } else {
         this.connection.channel.leave();
         this.connection = null;
@@ -85,14 +85,14 @@ module.exports = class Jukebox {
     });
 
     this.connection.dispatcher.on("error", (e) => {
-      this.handleError(message, e);
+      this.handleError(interaction, e);
     });
 
     this.isBusy = false;
   }
 
-  async handleError(message, e) {
-    message.say(
+  async handleError(interaction, e) {
+    interaction.reply(
       "Something has gone wrong. I cannot play the next song. I am ashamed."
     );
     this.queue = [];
@@ -104,62 +104,62 @@ module.exports = class Jukebox {
     console.error(e);
   }
 
-  checkSongIsPlaying(message) {
+  checkSongIsPlaying(interaction) {
     if (!this.connection || this.isBusy) { return }
-    if (!message.member.voice.channel) {
-      message.reply('I can only do that if you\'re in a voice channel. Join a channel and try again');
+    if (!interaction.member.voice.channel) {
+      interaction.reply('I can only do that if you\'re in a voice channel. Join a channel and try again');
       return false;
     }
     if (!this.connection.dispatcher) {
-      message.say('Um... sorry, looks like there is no song playing right now.');
+      interaction.reply('Um... sorry, looks like there is no song playing right now.');
       return false;
     }
     return true;
   }
 
-  pause(message) {
-    if (this.checkSongIsPlaying(message)) {
+  pause(interaction) {
+    if (this.checkSongIsPlaying(interaction)) {
       this.connection.dispatcher.pause();
-      message.say('Song paused :pause_button:');
+      interaction.reply('Song paused :pause_button:');
     }
   }
 
-  resume(message) {
-    if (this.checkSongIsPlaying(message)) {
+  resume(interaction) {
+    if (this.checkSongIsPlaying(interaction)) {
       this.connection.dispatcher.resume();    
-      message.say('Song resumed :play_pause:');
+      interaction.reply('Song resumed :play_pause:');
     }
   }
 
-  clear(message) {
-    if (this.checkSongIsPlaying(message)) {
+  clear(interaction) {
+    if (this.checkSongIsPlaying(interaction)) {
       this.queue = [];
       this.connection.dispatcher.end();
-      return message.say('Queue cleared');
+      return interaction.reply('Queue cleared');
     }
   }
 
-  skip(message) {
+  skip(interaction) {
     if (this.connection.dispatcher.busy) {
       return;
     }
     if (!this.connection?.dispatcher) {
-      message.say('Um... sorry, looks like there is no song playing right now.');
+      interaction.reply('Um... sorry, looks like there is no song playing right now.');
       return;
     }
     this.connection.dispatcher.end();
   }
 
-  remove(message, index = 0) {
+  remove(interaction, index = 0) {
     if (!this.queue.length) {
-      message.say('There are no songs in queue!');
+      interaction.reply('There are no songs in queue!');
       return;
     }
     if (this.queue[index]) {
       this.queue.splice(index, 0);
-      message.say('Song removed!');
+      interaction.reply('Song removed!');
     } else {
-      message.say(`No song at position ${index}!`);
+      interaction.reply(`No song at position ${index}!`);
     }
   }
 }

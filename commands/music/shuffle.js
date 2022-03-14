@@ -1,4 +1,4 @@
-const { Command } = require("discord.js-commando");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = class ShuffleCommand extends Command {
   constructor(client) {
@@ -12,9 +12,9 @@ module.exports = class ShuffleCommand extends Command {
     });
   }
   
-  run(message) {
-    if (message.guild.jukebox.queue.length == 0)
-      return message.say('There are no songs in queue!');
+  run(interaction) {
+    if (interaction.guild.jukebox.queue.length == 0)
+      return interaction.reply('There are no songs in queue!');
     function shuffleInPlace(array) {
       for (let i = 0; i < array.length; i++) {
         let rand = Math.floor(Math.random() * array.length);
@@ -24,8 +24,8 @@ module.exports = class ShuffleCommand extends Command {
       }
     }
 
-    shuffleInPlace(message.guild.jukebox.queue)
+    shuffleInPlace(interaction.guild.jukebox.queue)
 
-    return message.say(`Queue shuffled`);
+    return interaction.reply(`Queue shuffled`);
   }
 };

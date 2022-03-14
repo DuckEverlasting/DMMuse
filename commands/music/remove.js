@@ -1,4 +1,4 @@
-const { Command } = require("discord.js-commando");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = class RemoveCommand extends Command {
   constructor(client) {
@@ -19,8 +19,8 @@ module.exports = class RemoveCommand extends Command {
     });
   }
   
-  async run(message, { target }) {
-    const response = message.guild.jukebox.remove(target)
-    return message.say(response);
+  async run(interaction, { target }) {
+    const response = interaction.guild.jukebox.remove(target)
+    return interaction.reply(response);
   }
 };

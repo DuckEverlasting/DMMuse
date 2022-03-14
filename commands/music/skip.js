@@ -1,4 +1,4 @@
-const { Command } = require("discord.js-commando");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = class SkipCommand extends Command {
   constructor(client) {
@@ -12,7 +12,7 @@ module.exports = class SkipCommand extends Command {
     });
   }
   
-  async run(message) {
-    message.guild.jukebox.skip(message);
+  async run(interaction) {
+    interaction.guild.jukebox.skip(interaction);
   }
 };

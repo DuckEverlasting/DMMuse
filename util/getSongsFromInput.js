@@ -19,20 +19,20 @@ const localData = {
   }
 }
 
-module.exports = async function getSongsFromInput(message, input) {
+module.exports = async function getSongsFromInput(interaction, input) {
   // TODO - 
   // - implement the vars thing for local files
   // - local db? sqlite?
   if (localData[input]) {
     const songData = localData[input];
-    return [new Song(message.guild.jukebox, "file", songData)];
+    return [new Song(interaction.guild.jukebox, "file", songData)];
   } else if (
     input.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/)
   ) {
     try {
       const playlist = await youtube.getPlaylist(input);
       if (playlist.length > 20) {
-        message.say("That's a long playlist! I'm just going to take the first 20 of those, if you don't mind.");
+        interaction.reply("That's a long playlist! I'm just going to take the first 20 of those, if you don't mind.");
       }
       const videos = await playlist.getVideos(20);
       songs = videos.map((el) => {
@@ -44,12 +44,12 @@ module.exports = async function getSongsFromInput(message, input) {
           thumbnail: video.thumbnails.high.url,
           duration
         };
-        return new Song(message.guild.jukebox, "Youtube", songData);
+        return new Song(interaction.guild.jukebox, "Youtube", songData);
       });
       return songs;
     } catch (err) {
       console.error(err);
-      message.say("Playlist is either private or it does not exist");
+      interaction.reply("Playlist is either private or it does not exist");
       return null;
     }
   } else if (input.match(/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.?be)\/.+$/)) {
@@ -62,10 +62,10 @@ module.exports = async function getSongsFromInput(message, input) {
         thumbnail: video.thumbnails.high.url,
         duration
       };
-      return [new Song(message.guild.jukebox, "Youtube", songData)];
+      return [new Song(interaction.guild.jukebox, "Youtube", songData)];
     } catch (err) {
       console.error(err);
-      message.say("I'm afraid something has gone wrong.");
+      interaction.reply("I'm afraid something has gone wrong.");
       return null;
     }
   } else {
@@ -73,7 +73,7 @@ module.exports = async function getSongsFromInput(message, input) {
       const searchTerm = input;
       const videos = await youtube.searchVideos(searchTerm, 5);
       if (videos.length < 5) {
-        message.say(
+        interaction.reply(
           `I'm not finding too many videos when searching for ${searchTerm}...`
         );
         return null;
@@ -92,9 +92,9 @@ module.exports = async function getSongsFromInput(message, input) {
         .addField("Song 4", optionList[3])
         .addField("Song 5", optionList[4])
         .addField("None", "none");
-      var songEmbed = await message.say({ embed });
+      var songEmbed = await interaction.reply({ embed });
       try {
-        var response = await message.channel.awaitMessages(
+        var response = await interaction.channel.awaitMessages(
           (msg) =>
             (msg.content > 0 && msg.content < 6) || msg.content === "none",
           {
@@ -108,7 +108,7 @@ module.exports = async function getSongsFromInput(message, input) {
       } catch (err) {
         console.error(err);
         songEmbed.delete();
-        message.say(
+        interaction.reply(
           "Please try again and enter a number between 1 and 5 or exit"
         );
         return null;
@@ -121,7 +121,7 @@ module.exports = async function getSongsFromInput(message, input) {
       } catch (err) {
         console.error(err);
         songEmbed.delete();
-        message.say(
+        interaction.reply(
           "An error has occured when trying to get the video ID from youtube"
         );
         return null;
@@ -133,13 +133,13 @@ module.exports = async function getSongsFromInput(message, input) {
         thumbnail: video.thumbnails.high.url,
         duration
       };
-      return [new Song(message.guild.jukebox, "Youtube", songData)];
+      return [new Song(interaction.guild.jukebox, "Youtube", songData)];
     } catch (err) {
       console.error(err);
       if (songEmbed) {
         songEmbed.delete();
       }
-      message.say(
+      interaction.reply(
         "Something went wrong with searching the video you requested."
       );
       return null;

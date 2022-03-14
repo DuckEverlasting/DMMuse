@@ -19,7 +19,7 @@ module.exports = module.exports = class RollDice extends Command {
 		});
 	}
 
-	run(message, { request }) {
+	run(interaction, { request }) {
     const results = request.array.map(match => {
       if (match.groups.constant) {
         return rollAction(0, 0, new Number(match.groups.constant));
@@ -70,7 +70,7 @@ module.exports = module.exports = class RollDice extends Command {
       cumResult += result.result;
     })
     resultString += ` = **${cumResult}**`;
-    return message.reply(resultString);
+    return interaction.reply(resultString);
   }
 };
 

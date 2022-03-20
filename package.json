@@ -22,10 +22,11 @@
   },
   "scripts": {
     "prod": "pm2 start index.js --name DMMuse --time",
-    "dev": "pm2 start index.js --watch --name DMMuse (dev)",
+    "dev": "pm2 start index.js --watch --name DMMuse",
     "test": "cross-env DB_ENV=testing jest --watch",
     "status": "pm2 ls",
-    "logs": "pm2 logs"
+    "logs": "pm2 logs",
+    "stop": "pm2 kill"
   },
   "jest": {
     "testEnvironment": "node"

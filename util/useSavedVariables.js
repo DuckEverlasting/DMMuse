@@ -1,7 +1,7 @@
 const db = require('../data/dbConfig.js');
 
 exports.getVar = async function(key, interaction) {
-  const user = interaction.author.id;
+  const user = interaction.user.id;
 
   let variable = await db('userVars')
     .where("userid", user)
@@ -26,7 +26,7 @@ exports.setUserVar = async function({ params, interaction }) {
 
   const value = params.slice(0, params.indexOf("as")).join(" ");
   const key = params.slice(params.indexOf("as") + 1).join(" ");
-  const user = interaction.author.id;
+  const user = interaction.user.id;
 
   let isGlobal = await getGlobalVar(key);
   if (isGlobal) {
@@ -57,7 +57,7 @@ exports.setGlobalVar = async function({ params, interaction }) {
 
   const value = params.slice(0, params.indexOf("as")).join(" ");
   const key = params.slice(params.indexOf("as") + 1).join(" ");
-  const user = interaction.author.id;
+  const user = interaction.user.id;
 
   if (isAdmin(user)) {
     let alreadyExists = await getUserVar(key, user);

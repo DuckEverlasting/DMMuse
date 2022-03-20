@@ -13,7 +13,7 @@ class MusicRequest extends ArgumentType {
     const flags = parseFlags(flagsString);
 
     if (input.startsWith("<") && input.endsWith(">")) {
-      input = getVar(input.slice(1, val.length - 1), msg.author.id);
+      input = getVar(input.slice(1, val.length - 1), msg.user.id);
     }
     return {input, flags};
   }

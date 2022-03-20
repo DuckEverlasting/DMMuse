@@ -5,7 +5,7 @@ class DiceRequest extends ArgumentType {
     super(client, "dicerequest");
   }
 
-  parse(val, msg, arg) {
+  parse(val) {
     const parsed = []
     const parseExp = /(((?<rolls>[+-]?\d+)d(?<sides>\d+))(?<addend>[+-]\d+)?(?<keep>kl?\d*)?|(?<constant>[+-]?\d+))/gi;
     let res;

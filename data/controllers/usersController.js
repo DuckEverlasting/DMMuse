@@ -2,11 +2,11 @@ const knex = require('../../data/dbConfig');
 
 module.exports = {
     getUsers: function() {
-        return knex.select('id', 'username', 'role', 'preferredServer')
+        return knex.select('id', 'username', 'role', 'preferredGuild')
             .from('users');
     },
     getUser: function(id) {
-        return knex.first('id', 'username', 'role', 'preferredServer')
+        return knex.first('id', 'username', 'role', 'preferredGuild')
             .from('users')
             .where({ id: id });
     },
@@ -18,10 +18,10 @@ module.exports = {
         return knex('users')
             .insert({ id, username, role: 'ADMIN' });
     },
-    setPreferredServer: function(id, preferredServer) {
+    setPreferredGuild: function(id, preferredGuild) {
         return knex('users')
             .where({ id })
-            .update({ preferredServer, updated_at: knex.fn.now() });
+            .update({ preferredGuild, updated_at: knex.fn.now() });
     },
     updateUserRole: function(id, newRole) {
         return knex('users')

@@ -13,18 +13,3 @@ module.exports = {
         interaction.channel.send(`Uptime: ${uptimeHr} hour${uptimeHr == 1 ? 's' : ''}, ${uptimeMin} minute${uptimeMin == 1 ? 's' : ''}`);
     }
 }
-
-// addBooleanOption
-// addChannelOption
-// addIntegerOption
-// addMentionableOption
-// addNumberOption
-// addRoleOption
-// addStringOption
-// addSubcommand
-// addSubcommandGroup
-// addUserOption((builder: SlashCommandUserOption) => SlashCommandUserOption input)
-// setDefaultPermission(boolean value)
-//     Sets whether the command is enabled by default when the application is added to a guild.
-// setDescription(string description)
-// setName(string name)

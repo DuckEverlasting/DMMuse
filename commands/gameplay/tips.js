@@ -1,21 +1,24 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getTips } = require("../../data/controllers/tipsController");
+const getGuildState = require("../../util/getGuildState");
 
-module.exports = module.exports = class Strahd extends Command {
-  constructor(client) {
-    super(client, {
-      name: "tips",
-      aliases: ["advice"],
-      group: "gameplay",
-      memberName: "tips",
-      description: "Get some good advice.",
-    });
-  }
-
-  async run(interaction) {
-    const lastTip = interaction.guild?.lastTip || "";
-    const tips = await getTips().whereNot({ text: lastTip });
-    const randIndex = Math.floor(Math.random() * tips.length);
-    interaction.channel.send(tips[randIndex].text);
-  }
-};
+module.exports = {
+    name: "tips",
+    slashCommand: new SlashCommandBuilder()
+        .setName("tips")
+        .setDescription("Get some good advice."),
+    run: function(interaction, state) {
+        let guildState, lastTip;
+        try {
+            guildState = getGuildState(interaction, state);
+        } catch(e) {
+            // No big deal if there's no state on this one.
+            guildState = {}
+        }
+        lastTip = guildState.lastTip || "";
+        const tips = await getTips().whereNot({ text: lastTip });
+        const randIndex = Math.floor(Math.random() * tips.length);
+        interaction.reply(tips[randIndex].text);
+        guildState.lastTip = tips[randIndex].text;
+    }
+}

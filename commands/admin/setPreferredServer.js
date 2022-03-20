@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { setPreferredServer } = require("../../data/controllers/usersController");
+const { setPreferredGuild } = require("../../data/controllers/usersController");
 const addUserIfNew = require('../../util/addUserIfNew');
 
 module.exports = {
@@ -15,10 +15,10 @@ module.exports = {
         }),
     run: async function(interaction) {
         const serverName = interaction.options.getString('server-name');
-        await addUserIfNew(interaction.author);
+        await addUserIfNew(interaction.user);
         const guild = interaction.client.guilds.cache.find(g => g.name == serverName);
         if (guild) {
-            await setPreferredServer(interaction.author.id, guild.id);
+            await setPreferredGuild(interaction.user.id, guild.id);
             interaction.reply("Preferred server set!");
         } else {
             interaction.reply("Sorry, I'm not a member of any server with that name.");

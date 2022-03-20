@@ -5,7 +5,6 @@ fs.readdirSync('__dirname').forEach(dir => {
     fs.readdirSync('__dirname/' + dir).forEach(fileName => {
         const command = require(`./${fileName}`);
         commands[command.name] = { ...command, group: dir };
-        command.aliases?.forEach?.(a => commands[a] = { ...command, group: dir })
     });
 });
 

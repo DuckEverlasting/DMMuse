@@ -2,7 +2,6 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
     name: 'uptime',
-    aliases: [],
     slashCommand: new SlashCommandBuilder()
         .setName("uptime")
         .setDescription("Displays how long the bot has been logged into this server."),

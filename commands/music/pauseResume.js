@@ -2,10 +2,10 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const getJukebox = require("../../util/getJukebox");
 
 module.exports = {
-    name: "skip",
+    name: "pause-resume",
     slashCommand: new SlashCommandBuilder()
-        .setName("skip")
-        .setDescription("Skip to the next track in the song queue."),
+        .setName("pause-resume")
+        .setDescription("Pause or resume the current playing song."),
     run: async function(interaction, state) {
         let jukebox;
         await interaction.deferReply();
@@ -17,12 +17,8 @@ module.exports = {
                 'You do not have a preferred server set on which to play music. Please set one with "set-preferred-server", or send this command from a server channel.'
             );
         }
-        const { response } = jukebox.skip();
-        if (response) {
-            interaction.editReply(response)
-        } else {
-            interaction.deleteReply();
-        }
+        const { response } = jukebox.pauseResume(interaction);
+        interaction.editReply(response);
     },
     runLegacy: async function(message, state, params) {
         let jukebox;
@@ -34,9 +30,7 @@ module.exports = {
                 'You do not have a preferred server set on which to play music. Please set one with "set-preferred-server", or send this command from a server channel.'
             );
         }
-        const { response } = jukebox.skip();
-        if (response) {
-            message.reply(response)
-        }
+        const { response } = jukebox.pauseResume(message);
+        message.reply(response);
     }
 }

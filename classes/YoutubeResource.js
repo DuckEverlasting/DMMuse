@@ -1,3 +1,4 @@
+const { createAudioResource } = require('@discordjs/voice');
 const Resource = require("./Resource");
 const ytdl = require("ytdl-core");
 
@@ -7,11 +8,12 @@ module.exports = class YoutubeResource extends Resource {
   }
 
   getResource() {
-    return ytdl(
-      this.uri, {
-        quality: "highestaudio",
-        highWaterMark: 1024 * 1024 * 10,
-      }
-    )
+    return createAudioResource(
+        ytdl(this.uri, {
+            quality: "highestaudio",
+            highWaterMark: 1048576 * 32,
+        }),
+        { inlineVolume: true }
+    );
   }
 }

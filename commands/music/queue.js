@@ -1,28 +1,88 @@
-const { Command } = require('discord.js-commando');
-const { interactionEmbed } = require('discord.js');
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const getSongsFromInput = require("../../util/getSongsFromInput");
+const getJukebox = require("../../util/getJukebox");
+const getVoiceChannel = require("../../util/getVoiceChannel");
 
-module.exports = class QueueCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'queue-info',
-      aliases: ['song-list', 'song-info', 'queue'],
-      group: 'music',
-      memberName: 'queue-info',
-      guildOnly: true,
-      description: 'Displays the song queue'
-    });
-  }
+module.exports = {
+    name: "queue",
+    slashCommand: new SlashCommandBuilder()
+        .setName("queue")
+        .setDescription("Add song to the queue.")
+        .addStringOption(option => {
+            return option
+                .setName("song")
+                .setDescription("The song to be added")
+                .setRequired(true)
+        }),
+    run: async function(interaction, state) {
+        await interaction.deferReply();
+        try {
+            getVoiceChannel(interaction)
+        } catch(e) {
+            console.error(e);
+            return interaction.editReply(
+                "I can only play music in voice channels. Join a voice channel and try again."
+            );
+        }
+        let jukebox;
+        try {
+            jukebox = getJukebox(interaction, state)
+        } catch(e) {
+            return interaction.editReply(
+                'You do not have a preferred server set on which to play music. Please set one with "set-preferred-server", or send this command from a server channel.'
+            );
+        }
 
-  run(interaction) {
-    if (interaction.guild.jukebox.queue.length == 0)
-      return interaction.reply('There are no songs in queue!');
-    const titleArray = interaction.guild.jukebox.queue.map(song => song.title);
-    var queueEmbed = new MessageEmbed()
-      .setColor('#fafa32')
-      .setTitle('Current Music Queue');
-    for (let i = 0; i < titleArray.length; i++) {
-      queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
+        const input = interaction.options.getString('song').trim();
+        getSongsFromInput(
+            interaction,
+            jukebox,
+            input,
+            (songs) => {
+                if (!jukebox.queue.length) {
+                    jukebox.enqueue(songs);
+                    jukebox.startPlaying(interaction);
+                } else {
+                    jukebox.enqueue(songs);
+                }
+                //interaction.editReply(`${songs.length > 1 ? "Songs" : "Song"} added to queue!`);
+            },
+            (errorMsg) => {interaction.editReply(errorMsg)}
+        );
+    },
+    runLegacy: async function(message, state, params) {
+        try {
+            getVoiceChannel(message)
+        } catch(e) {
+            console.error(e);
+            return message.reply(
+                "I can only play music in voice channels. Join a voice channel and try again."
+            );
+        }
+        let jukebox;
+        try {
+            jukebox = getJukebox(message, state)
+        } catch(e) {
+            return message.reply(
+                'You do not have a preferred server set on which to play music. Please set one with "set-preferred-server", or send this command from a server channel.'
+            );
+        }
+
+        const input = params[0];
+        getSongsFromInput(
+            message,
+            jukebox,
+            input,
+            (songs) => {
+                if (!jukebox.queue.length) {
+                    jukebox.enqueue(songs);
+                    jukebox.startPlaying(message);
+                } else {
+                    jukebox.enqueue(songs);
+                }
+                //message.editReply(`${songs.length > 1 ? "Songs" : "Song"} added to queue!`);
+            },
+            (errorMsg) => {message.editReply(errorMsg)}
+        );
     }
-    return interaction.reply(queueEmbed);
-  }
-};
+}

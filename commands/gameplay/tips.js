@@ -7,7 +7,7 @@ module.exports = {
     slashCommand: new SlashCommandBuilder()
         .setName("tips")
         .setDescription("Get some good advice."),
-    run: function(interaction, state) {
+    run: async function(interaction, state) {
         let guildState, lastTip;
         try {
             guildState = getGuildState(interaction, state);

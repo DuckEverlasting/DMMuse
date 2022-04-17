@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { createAudioResource } = require('@discordjs/voice');
 const fs = require("fs");
 const Resource = require("./Resource");
 
@@ -15,6 +16,9 @@ module.exports = class FileResource extends Resource {
   }
 
   getResource() {
-    return this.getPath();
+    return createAudioResource(
+        this.getPath(),
+        { inlineVolume: true }
+    );
   }
 }

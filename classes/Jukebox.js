@@ -1,165 +1,297 @@
 const Song = require("../classes/Song");
+const { MessageEmbed } = require("discord.js");
+const {
+    AudioPlayerStatus,
+    joinVoiceChannel,
+    createAudioPlayer,
+    getVoiceConnection,
+    NoSubscriberBehavior,
+} = require("@discordjs/voice");
+const fade = require("../util/fadeMusic");
+const shuffleInPlace = require("../util/shuffleInPlace");
+const getVoiceChannel = require("../util/getVoiceChannel");
 
 module.exports = class Jukebox {
-  constructor() {
-    this.queue = [];
-    this.playOrder = [];
-    this.isBusy = false;
-    this.volume = .25;
-    this.loop = "none";
-    this.shuffle = false;
-    this.busy = false;
-    this.connection = null;
-  }
-
-  enqueue(content) {
-    if (content instanceof Array) {
-      this.queue.push(...content);
-    } else if (content instanceof Song) {
-      this.queue.push(content);
-    }
-  }
-
-  updateQueue() {
-    // Remove song from queue
-    const song = this.queue.shift();
-    // Shuffle queue if enabled
-    if (this.shuffle) {
-      for (let i = queue.length - 1; i > 0; i--) {
-        randInd = Math.floor(Math.random() * (i + 1));
-        [queue[i], queue[randInd]] = [queue[randInd], queue[i]];
-      }
-    }
-    // Add song back if looping is on
-    if (this.loop === "all") {
-      this.queue.push(song);
-    } else if (this.loop === "current") {
-      this.queue.unshift(song);
-    }
-  }
-
-  checkConnection(interaction) {
-    const voiceChannel = interaction.member.voice.channel;
-    return this.connection?.channel?.id == voiceChannel.id;
-  }
-
-  async setConnection(interaction) {
-    if (this.connection) {
-      await this.connection.dispatcher?.end();
-    }
-    this.connection = await interaction.member.voice.channel.join();
-  }
-
-  async play(interaction) {
-    if (this.isBusy) {
-      return;
-    }
-    this.isBusy = true;
-
-    if (!this.checkConnection(interaction)) {
-      await this.setConnection(interaction);
+    constructor() {
+        this.queue = [];
+        this.playOrder = [];
+        this.isBusy = false;
+        this.volume = 0.25;
+        this.loop = "none";
+        // this.shuffle = false;
+        this.busy = false;
+        this.currentVoiceChannel = null;
+        this.currentTextChannel = null;
+        this.player = createAudioPlayer({
+            behaviors: {
+                noSubscriber: NoSubscriberBehavior.Pause,
+            },
+        });
+        this.currentResource = null;
+        this.silenceNextPlay = false;
+        this.subscriptions = {
+            play: [],
+            queueChange: []
+        }
     }
 
-    const song = this.queue[0];
-
-    try {
-      await this.connection.play(song.getResource());
-    } catch(e) {
-      return this.handleError(interaction, e);
+    on(eventName, callback) {
+        if (this.subscriptions[eventName]) {
+            this.subscriptions[eventName].push(callback);
+        } else {
+            throw new Error(`Jukebox has no event named "${eventName}."`);
+        }
     }
 
-    this.connection.dispatcher.on("start", () => {
-      this.connection.dispatcher.setVolume(this.volume);
-      interaction.reply(song.getVideoEmbed());
-    });
-
-    this.connection.dispatcher.on("finish", () => {
-      this.updateQueue();
-      if (this.queue.length >= 1) {
-        return this.play(interaction);
-      } else {
-        this.connection.channel.leave();
-        this.connection = null;
-        return 
-      }
-    });
-
-    this.connection.dispatcher.on("error", (e) => {
-      this.handleError(interaction, e);
-    });
-
-    this.isBusy = false;
-  }
-
-  async handleError(interaction, e) {
-    interaction.reply(
-      "Something has gone wrong. I cannot play the next song. I am ashamed."
-    );
-    this.queue = [];
-    this.isBusy = false;
-    if (this.connection) {
-      await this.connection.dispatcher?.end();
+    off(eventName, callback) { 
+        if (this.subscriptions[eventName]) {
+            this.subscriptions[eventName] = this.subscriptions[eventName].filter(cb => cb !== callback);
+        } else {
+            throw new Error(`Jukebox has no event named "${eventName}."`);
+        }
     }
-    this.connection = null;
-    console.error(e);
-  }
 
-  checkSongIsPlaying(interaction) {
-    if (!this.connection || this.isBusy) { return }
-    if (!interaction.member.voice.channel) {
-      interaction.reply('I can only do that if you\'re in a voice channel. Join a channel and try again');
-      return false;
+    async onPlay() {
+        this.subscriptions.play.forEach(async (cb) => await cb());
     }
-    if (!this.connection.dispatcher) {
-      interaction.reply('Um... sorry, looks like there is no song playing right now.');
-      return false;
-    }
-    return true;
-  }
 
-  pause(interaction) {
-    if (this.checkSongIsPlaying(interaction)) {
-      this.connection.dispatcher.pause();
-      interaction.reply('Song paused :pause_button:');
+    async onQueueChange() {
+        this.subscriptions.queueChange.forEach(async (cb) => await cb());
     }
-  }
 
-  resume(interaction) {
-    if (this.checkSongIsPlaying(interaction)) {
-      this.connection.dispatcher.resume();    
-      interaction.reply('Song resumed :play_pause:');
+    enqueue(content) {
+        if (content instanceof Array) {
+            this.queue.push(...content);
+            this.onQueueChange();
+        } else if (content instanceof Song) {
+            this.queue.push(content);
+            this.onQueueChange();
+        }
     }
-  }
 
-  clear(interaction) {
-    if (this.checkSongIsPlaying(interaction)) {
-      this.queue = [];
-      this.connection.dispatcher.end();
-      return interaction.reply('Queue cleared');
+    setQueue(content) {
+        this.queue = content;
+        this.onQueueChange();
     }
-  }
 
-  skip(interaction) {
-    if (this.connection.dispatcher.busy) {
-      return;
+    updateQueue() {
+        // Remove song from queue
+        const song = this.queue.shift();
+        /*
+        // Shuffle queue if enabled
+        if (this.shuffle) {
+            for (let i = queue.length - 1; i > 0; i--) {
+                randInd = Math.floor(Math.random() * (i + 1));
+                [queue[i], queue[randInd]] = [queue[randInd], queue[i]];
+            }
+        }
+        */
+        // Add song back if looping is on
+        if (this.loop === "all") {
+            this.queue.push(song);
+        } else if (this.loop === "current") {
+            this.queue.unshift(song);
+        }
+        this.onQueueChange();
     }
-    if (!this.connection?.dispatcher) {
-      interaction.reply('Um... sorry, looks like there is no song playing right now.');
-      return;
-    }
-    this.connection.dispatcher.end();
-  }
 
-  remove(interaction, index = 0) {
-    if (!this.queue.length) {
-      interaction.reply('There are no songs in queue!');
-      return;
+    getConnection(voiceChannel) {
+        this.currentVoiceChannel = voiceChannel;
+        let connection = getVoiceConnection(this.currentVoiceChannel.guild.id);
+        if (!connection) {
+            connection = joinVoiceChannel({
+                channelId: this.currentVoiceChannel.id,
+                guildId: this.currentVoiceChannel.guild.id,
+                adapterCreator: this.currentVoiceChannel.guild.voiceAdapterCreator,
+            });
+            connection.subscribe(this.player);
+        }
+        return connection;
     }
-    if (this.queue[index]) {
-      this.queue.splice(index, 0);
-      interaction.reply('Song removed!');
-    } else {
-      interaction.reply(`No song at position ${index}!`);
+
+    startPlaying(discordObj) {
+        this.currentTextChannel = discordObj.channel;
+        this.play(getVoiceChannel(discordObj));
     }
-  }
-}
+
+    async play(voiceChannel) {
+        if (this.isBusy) {
+            return;
+        }
+        this.isBusy = true;
+
+        this.getConnection(voiceChannel);
+
+        const song = this.queue[0];
+
+        try {
+            this.currentResource = song.getResource();
+            this.currentResource.volume.setVolume(this.volume);
+            this.player.play(this.currentResource);
+        } catch (e) {
+            return this.handleError(e);
+        }
+
+        this.player.on(AudioPlayerStatus.Playing, async () => {
+            await this.onPlay();
+            if (!this.silenceNextPlay) {
+                this.currentTextChannel?.send({ embeds: [song.getVideoEmbed()] });
+            } else {
+                this.silenceNextPlay = false;
+            }
+        });
+
+        this.player.addListener("stateChange", (prev, curr) => {
+            if (prev.status && curr.status == AudioPlayerStatus.Idle) {
+                this.updateQueue();
+                if (this.queue.length >= 1) {
+                    return this.play(voiceChannel);
+                } else {
+                    this.currentResource = null;
+                    return this.getConnection(voiceChannel).destroy();
+                }
+            }
+        });
+
+        this.player.on("error", (e) => {
+            this.handleError(e);
+            this.updateQueue();
+            if (this.queue.length >= 1) {
+                return this.play(voiceChannel);
+            } else {
+                this.currentResource = null;
+                return this.getConnection(voiceChannel).destroy();
+            }
+        });
+
+        this.isBusy = false;
+    }
+
+    async handleError(e) {
+        this.currentTextChannel?.send(
+            "Something has gone wrong. I cannot play the next song. I am ashamed."
+        );
+        console.error(e);
+    }
+
+    pause() {
+        if (this.player.state.status == AudioPlayerStatus.Playing) {
+            this.player.pause();
+            return { response: "Song paused :play_pause:" }
+        } else {
+            return { response: "Um... sorry, looks like I'm not playing music at the moment. Put some songs in the queue!" }
+        }
+    }
+
+    resume(options = {}) {
+        if (this.player.state.status == AudioPlayerStatus.Paused) {
+            if (options.quiet) {
+                this.silenceNextPlay = true;
+            }
+            this.player.unpause();
+            return { response: "Song resumed :play_pause:" }
+        } else {
+            return { response: "Um... sorry, looks like I'm not currently paused." }
+        }
+    }
+
+    pauseResume(options = {}) {
+        if (this.player.state.status == AudioPlayerStatus.Paused) {
+            return this.resume(options);
+        } else {
+            return this.pause(options);
+        }
+    }
+
+    clear() {
+        if (this.player.state.status != AudioPlayerStatus.Idle) {
+            this.queue = [];
+            this.player.stop();
+            this.onQueueChange();
+            return { response: "Queue cleared" }
+        } else {
+            return { response: "Um... sorry, looks like I'm not playing music at the moment. Put some songs in the queue!" }
+        }
+    }
+
+    skip() {
+        if (this.player.state.status != AudioPlayerStatus.Idle) {
+            this.player.stop();
+            if (this.queue.length < 2 && this.player.state.status == AudioPlayerStatus.Paused) {
+                this.player.unpause();
+            }
+            return { response: "" }
+        } else {
+            return { response: "Um... sorry, looks like I'm not playing music at the moment. Put some songs in the queue!" }
+        }
+    }
+
+    remove(index = 0) {
+        if (!this.queue.length) {
+            return { response: "There are no songs in queue!" }
+        }
+        if (this.queue[index]) {
+            this.queue.splice(index, 0);
+            this.onQueueChange();
+            return { response: "Song removed!" }
+        } else {
+            return { response: `No song at position ${index}!` }
+        }
+    }
+
+    setVolume(level) {
+        if (this.isBusy || !this.currentResource) {
+            return { response: "" }
+        }
+        this.currentResource.volume.setVolume(level);
+        this.volume = level;
+        return { response: "Volume set" }
+    }
+    
+    async fadeVolume(level, length) {
+        if (this.isBusy || !this.currentResource) {
+            return { response: "" }
+        }
+        this.isBusy = true;
+        await fade(this.currentResource, level, length);
+        this.volume = level;
+        this.isBusy = false;
+        return { response: "Volume set" }
+    }
+
+    shuffle() {
+        shuffleInPlace(this.queue);
+        this.onQueueChange();
+    }
+
+    setLoop(type) {
+        if (type === "toggle") {
+            switch (this.loop) {
+                case "none":
+                    type = "current";
+                    break;
+                case "current":
+                    type = "all";
+                    break;
+                case "all":
+                    type = "none";
+                    break;
+            }
+        }
+        this.loop = type;
+    }
+
+    getQueueInfo() {
+        if (this.queue.length == 0)
+            return { response: "There are no songs in queue!" }
+        const titleArray = this.queue.map((song) => song.title);
+        var queueEmbed = new MessageEmbed()
+            .setColor("#fafa32")
+        let list = '';
+        for (let i = 0; i < titleArray.length; i++) {
+            list += (`${i + 1}: ${titleArray[i]}\n`);
+        }
+        queueEmbed.addField('Current Music Queue', list || '(empty)');
+        return { response: "", embed: queueEmbed };
+    }
+};

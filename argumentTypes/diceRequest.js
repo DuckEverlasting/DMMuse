@@ -1,10 +1,4 @@
-const { ArgumentType } = require('discord.js-commando');
-
-class DiceRequest extends ArgumentType {
-  constructor(client) {
-    super(client, "dicerequest");
-  }
-
+class DiceRequest {
   parse(val) {
     const parsed = []
     const parseExp = /(((?<rolls>[+-]?\d+)d(?<sides>\d+))(?<addend>[+-]\d+)?(?<keep>kl?\d*)?|(?<constant>[+-]?\d+))/gi;

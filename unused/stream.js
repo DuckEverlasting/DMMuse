@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const getSongsFromInput = require("../../util/getSongsFromInput");
 
 module.exports = class PlayCommand extends Command {
   constructor(client) {

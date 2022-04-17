@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { interactionEmbed } = require("discord.js");
 const {
     getTips,
     getTipsByUser,

@@ -28,7 +28,7 @@ module.exports = {
                 );
             }
         });
-        return interaction.reply(getResultString(results));
+        return interaction.reply(getResultString(results, request));
     }
 };
 
@@ -88,7 +88,7 @@ function rollAction(
     return { rolls, add, result };
 }
 
-function getResultString(results) {
+function getResultString(results, request) {
     let resultString = `Rolling ${"`"}${request.original}${"`"}...\n`;
     let cumResult = 0;
     results.forEach((result, index) => {
@@ -126,4 +126,5 @@ function getResultString(results) {
         cumResult += result.result;
     });
     resultString += ` = **${cumResult}**`;
+    return resultString;
 }

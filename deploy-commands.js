@@ -2,16 +2,18 @@ require('dotenv').config();
 
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { getGuilds } = require("../../data/controllers/guildsController");
+const { getGuilds } = require("./data/controllers/guildsController");
 const commands = require('./commands');
 
-const slashCommands = commands.values().map(command => command.slashCommand.toJSON());
+const slashCommands = Object.values(commands).map(command => {
+    return command.slashCommand.toJSON()
+});
 
 const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
 
-function registerCommands(guildId, guildName) {
-    rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId), { body: slashCommands })
-        .then(() => console.log('Successfully registered application commands for guild ' + guildName))
+function registerCommands(guild) {
+    rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guild.id), { body: slashCommands })
+        .then(() => console.log('Successfully registered application commands for guild ' + guild.name))
         .catch(console.error);
 }
 

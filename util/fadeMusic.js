@@ -1,33 +1,39 @@
-module.exports = async function fadeMusic(dispatcher, value, speed = 1) {
+module.exports = async function fadeMusic(resource, value, speed = 2) {
   console.log("FADING...")
   let target = null;
   if (!value) {
-    target = dispatcher.volume > 0 ? 0 : 1;
+    target = resource.volume.volume > 0 ? 0 : 1;
   } else if (typeof value === "number") {
     target = Math.max(Math.min(value, 2), 0);
   } else if (value in terms) {
-    if (terms.value === 0 || dispatcher.volume < terms.value) {
+    if (terms.value === 0 || resource.volume.volume < terms.value) {
       target = terms.value;
     }
   }
+  speed = Math.max(.25, Math.min(speed, 20));
+  console.log("SPEED: " + speed);
 
-  if (target !== null && target !== dispatcher.volume) {
-    const fadeInterval = (target - dispatcher.volume) / (5 * speed);
-
-    while(dispatcher.volume !== target) {
-      await dispatcher.setVolume(dispatcher.volume + fadeInterval);
+  if (target !== null && target !== resource.volume.volume) {
+    const fadeInterval = (target - resource.volume.volume) / (8 * speed);
+    let time = Date.now();
+    let count = 0;
+    while(resource.volume.volume !== target) {
+      await resource.volume.setVolume(resource.volume.volume + fadeInterval);
+      count++
       if (fadeInterval > 0) {
-        if (dispatcher.volume > target) {
-          await dispatcher.setVolume(target);
+        if (resource.volume.volume > target) {
+          await resource.volume.setVolume(target);
         }
       } else {
-        if (dispatcher.volume < target) {
-          await dispatcher.setVolume(target);
+        if (resource.volume.volume < target) {
+          await resource.volume.setVolume(target);
         }
       }
-      console.log(dispatcher.volume)
-      await wait(500);
+      console.log(resource.volume.volume)
+      await wait(125);
     }
+    console.log(`TIME: ${Date.now() - time}`);
+    console.log("COUNT: " + count)
   }
 }
 

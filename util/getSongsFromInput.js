@@ -27,7 +27,7 @@ module.exports = async function getSongsFromInput(discordObj, jukebox, input, su
     if (localData[input]) {
         const songData = localData[input];
         if (isInteraction) {
-            discordObj.deleteReply();
+            discordObj.editReply("Playing...");
         }
         return successCallback([new Song(jukebox, "file", songData)]);
     } else if (
@@ -55,7 +55,7 @@ module.exports = async function getSongsFromInput(discordObj, jukebox, input, su
                 return new Song(jukebox, "Youtube", songData);
             });
             if (isInteraction) {
-                discordObj.deleteReply();
+                discordObj.editReply("Playing...");
             }
             return successCallback(songs);
         } catch (err) {
@@ -75,7 +75,7 @@ module.exports = async function getSongsFromInput(discordObj, jukebox, input, su
                 duration,
             };
             if (isInteraction) {
-                discordObj.deleteReply();
+                discordObj.editReply("Playing...");
             }
             return successCallback([new Song(jukebox, "Youtube", songData)]);
         } catch (err) {
@@ -101,6 +101,7 @@ module.exports = async function getSongsFromInput(discordObj, jukebox, input, su
                     .addOptions(optionList)
             );
 
+            let optionsMessage = null;
             if (isInteraction) {
                 await discordObj.editReply({
                     content: `Top ${optionList.length - 1} results for "${searchTerm}":`,
@@ -108,7 +109,7 @@ module.exports = async function getSongsFromInput(discordObj, jukebox, input, su
                     ephemeral: true,
                 });
             } else {
-                await discordObj.channel.send({
+                optionsMessage = await discordObj.channel.send({
                     content: `Top ${optionList.length - 1} results for "${searchTerm}":`,
                     components: [row],
                     ephemeral: true,
@@ -119,11 +120,23 @@ module.exports = async function getSongsFromInput(discordObj, jukebox, input, su
             );
             collector.on('collect', async msg => {
                 if (isInteraction) {
-                    msg.deleteReply();
+                    if (msg.user != discordObj.user) {
+                        return;
+                    }
+                    discordObj.editReply({
+                        content: "Playing...",
+                        components: [],
+                        ephemeral: true
+                    });
+                } else {
+                    if (msg.user != discordObj.user) {
+                        return;
+                    }
+                    optionsMessage.delete();
                 }
                 const choice = msg.values[0];
                 if (choice === "none") {
-                    return
+                    return;
                 }
                 try {
                     // get video data from the API

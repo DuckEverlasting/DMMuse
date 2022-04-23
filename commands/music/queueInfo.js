@@ -8,7 +8,7 @@ module.exports = {
         .setDescription("Displays the song queue."),
     run: async function (interaction, state) {
         let jukebox;
-        interaction.deferReply();
+        await interaction.deferReply();
         try {
             jukebox = getJukebox(interaction, state)
         } catch (e) {
@@ -21,12 +21,12 @@ module.exports = {
         const { response, embed } = jukebox.getQueueInfo();
         if (response) {
             interaction.editReply(response);
+        } else if (embed) {
+            interaction.editReply({ embeds: [ embed ] });
         } else {
             interaction.deleteReply();
         }
-        if (embed) {
-            interaction.channel.send({ embeds: [ embed ] });
-        }
+        
     },
     runLegacy: async function(message, state, params) {
         let jukebox;

@@ -15,6 +15,7 @@ module.exports = {
                 .setRequired(true)
         }),
     run: async function(interaction, state) {
+        return interaction.reply("CURRENTLY DISABLED");
         await interaction.deferReply();
         try {
             getVoiceChannel(interaction)
@@ -45,12 +46,13 @@ module.exports = {
                 } else {
                     jukebox.enqueue(songs);
                 }
-                //interaction.editReply(`${songs.length > 1 ? "Songs" : "Song"} added to queue!`);
+                interaction.editReply(`${songs.length > 1 ? "Songs" : "Song"} added to queue!`);
             },
             (errorMsg) => {interaction.editReply(errorMsg)}
         );
     },
     runLegacy: async function(message, state, params) {
+        return interaction.reply("CURRENTLY DISABLED");
         try {
             getVoiceChannel(message)
         } catch(e) {

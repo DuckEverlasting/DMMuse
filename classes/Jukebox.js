@@ -27,12 +27,47 @@ module.exports = class Jukebox {
                 noSubscriber: NoSubscriberBehavior.Pause,
             },
         });
-        this.currentResource = null;
         this.silenceNextPlay = false;
         this.subscriptions = {
             play: [],
             queueChange: []
         }
+
+        this.player.on(AudioPlayerStatus.Playing, async () => {
+            await this.onPlay();
+            if (!this.silenceNextPlay) {
+                this.currentTextChannel?.send({ embeds: [this.queue[0].getVideoEmbed()] });
+            } else {
+                this.silenceNextPlay = false;
+            }
+        });
+
+        this.player.addListener("stateChange", (prev, curr) => {
+            if (!this.currentVoiceChannel) {
+                return;
+            }
+            if (prev.status && curr.status == AudioPlayerStatus.Idle) {
+                this.updateQueue();
+                if (this.queue.length >= 1) {
+                    return this.play(this.currentVoiceChannel);
+                } else {
+                    return this.getConnection(this.currentVoiceChannel).destroy();
+                }
+            }
+        });
+
+        this.player.on("error", (e) => {
+            this.handleError(e);
+            if (!this.currentVoiceChannel) {
+                return;
+            }
+            this.updateQueue();
+            if (this.queue[0]) {
+                return this.play(voiceChannel);
+            } else {
+                return this.getConnection(voiceChannel).destroy();
+            }
+        });
     }
 
     on(eventName, callback) {
@@ -60,6 +95,8 @@ module.exports = class Jukebox {
     }
 
     enqueue(content) {
+        console.log("*****************CURRENT QUEUE****************")
+        console.log(this.queue.map(x => x.title))
         if (content instanceof Array) {
             this.queue.push(...content);
             this.onQueueChange();
@@ -67,6 +104,8 @@ module.exports = class Jukebox {
             this.queue.push(content);
             this.onQueueChange();
         }
+        console.log("*****************NEW QUEUE****************")
+        console.log(this.queue.map(x => x.title))
     }
 
     setQueue(content) {
@@ -122,47 +161,12 @@ module.exports = class Jukebox {
 
         this.getConnection(voiceChannel);
 
-        const song = this.queue[0];
-
         try {
-            this.currentResource = song.getResource();
-            this.currentResource.volume.setVolume(this.volume);
-            this.player.play(this.currentResource);
+            this.queue[0].getResource().volume.setVolume(this.volume);
+            this.player.play(this.queue[0].getResource());
         } catch (e) {
             return this.handleError(e);
         }
-
-        this.player.on(AudioPlayerStatus.Playing, async () => {
-            await this.onPlay();
-            if (!this.silenceNextPlay) {
-                this.currentTextChannel?.send({ embeds: [song.getVideoEmbed()] });
-            } else {
-                this.silenceNextPlay = false;
-            }
-        });
-
-        this.player.addListener("stateChange", (prev, curr) => {
-            if (prev.status && curr.status == AudioPlayerStatus.Idle) {
-                this.updateQueue();
-                if (this.queue.length >= 1) {
-                    return this.play(voiceChannel);
-                } else {
-                    this.currentResource = null;
-                    return this.getConnection(voiceChannel).destroy();
-                }
-            }
-        });
-
-        this.player.on("error", (e) => {
-            this.handleError(e);
-            this.updateQueue();
-            if (this.queue.length >= 1) {
-                return this.play(voiceChannel);
-            } else {
-                this.currentResource = null;
-                return this.getConnection(voiceChannel).destroy();
-            }
-        });
 
         this.isBusy = false;
     }
@@ -240,20 +244,20 @@ module.exports = class Jukebox {
     }
 
     setVolume(level) {
-        if (this.isBusy || !this.currentResource) {
+        if (this.isBusy || !this.queue[0]) {
             return { response: "" }
         }
-        this.currentResource.volume.setVolume(level);
+        this.queue[0].getResource().volume.setVolume(level);
         this.volume = level;
         return { response: "Volume set" }
     }
     
     async fadeVolume(level, length) {
-        if (this.isBusy || !this.currentResource) {
+        if (this.isBusy || !this.queue[0]) {
             return { response: "" }
         }
         this.isBusy = true;
-        await fade(this.currentResource, level, length);
+        await fade(this.queue[0].getResource(), level, length);
         this.volume = level;
         this.isBusy = false;
         return { response: "Volume set" }

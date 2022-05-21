@@ -247,7 +247,9 @@ module.exports = class Jukebox {
         if (this.isBusy || !this.queue[0]) {
             return { response: "" }
         }
+        console.log(this.queue[0].getResource().volume.volume);
         this.queue[0].getResource().volume.setVolume(level);
+        console.log(this.queue[0].getResource().volume.volume);
         this.volume = level;
         return { response: "Volume set" }
     }

@@ -5,15 +5,16 @@ const ytdl = require("ytdl-core");
 module.exports = class YoutubeResource extends Resource {
   constructor(uri) {
     super(uri);
-  }
-
-  getResource() {
-    return createAudioResource(
+    this.resource = createAudioResource(
         ytdl(this.uri, {
             quality: "highestaudio",
             highWaterMark: 1048576 * 32,
         }),
         { inlineVolume: true }
     );
+  }
+
+  getResource() {
+    return this.resource;
   }
 }
